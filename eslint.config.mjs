@@ -5,7 +5,7 @@ import tseslint from "typescript-eslint";
 const eslintConfig = [
   ...tseslint.configs.recommended,
   nextPlugin.configs["core-web-vitals"],
-  globalIgnores([".next/**", "out/**", "node_modules/**"]),
+  globalIgnores([".next/**", ".netlify/**", "out/**", "node_modules/**"]),
 ];
 
 export default eslintConfig;

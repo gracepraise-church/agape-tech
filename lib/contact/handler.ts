@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { contactInquirySchema } from "./schema";
-import { ContactDeliveryError, createResendEmailProvider } from "./email-provider";
+import { createResendEmailProvider } from "./email-provider";
 import type {
   ContactEmailProvider,
   ContactEnvironment,
@@ -267,14 +267,10 @@ export async function handleContactRequest(
 
   try {
     await emailProvider.sendInquiry(inquiry, submittedAt);
-  } catch (error) {
-    const providerCode =
-      error instanceof ContactDeliveryError ? error.providerCode : undefined;
+  } catch {
     (dependencies.logError ?? ((details) => console.error("Contact function delivery failed.", details)))({
       requestId,
       category: "internal_email_delivery_failed",
-      errorName: error instanceof Error ? error.name : "UnknownError",
-      providerCode: providerCode && /^[\w-]{1,64}$/.test(providerCode) ? providerCode : undefined,
     });
     return response(502, {
       status: "error",
@@ -289,11 +285,10 @@ export async function handleContactRequest(
   ) {
     try {
       await emailProvider.sendAcknowledgement(inquiry);
-    } catch (error) {
+    } catch {
       (dependencies.logError ?? ((details) => console.error("Contact function acknowledgement failed.", details)))({
         requestId,
         category: "visitor_acknowledgement_failed",
-        errorName: error instanceof Error ? error.name : "UnknownError",
       });
     }
   }
