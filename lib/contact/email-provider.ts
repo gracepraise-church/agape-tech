@@ -1,4 +1,5 @@
 import type { ContactEnvironment, ContactInquiry, ContactEmailProvider } from "./types";
+import { business } from "../../content/business";
 
 function escapeHtml(value: string) {
   return value.replace(/[&<>"']/g, (character) => {
@@ -38,7 +39,7 @@ function buildInquiryContent(inquiry: ContactInquiry, submittedAt: string) {
 
   return {
     text,
-    html: `<div style="font-family:Arial,sans-serif;color:#0f172a"><h1 style="font-size:20px">New Agape Tech project inquiry</h1><table style="border-collapse:collapse">${html}</table></div>`,
+    html: `<div style="font-family:Arial,sans-serif;color:#0f172a"><h1 style="font-size:20px">New ${escapeHtml(business.brandName)} project inquiry</h1><table style="border-collapse:collapse">${html}</table></div>`,
   };
 }
 
@@ -76,7 +77,7 @@ class ResendContactEmailProvider implements ContactEmailProvider {
       from: this.from,
       to: this.to,
       replyTo: inquiry.email,
-      subject: `New Agape Tech Project Inquiry — ${inquiry.service}`,
+      subject: `New ${business.brandName} Project Inquiry — ${inquiry.service}`,
       ...content,
     });
 
@@ -91,16 +92,16 @@ class ResendContactEmailProvider implements ContactEmailProvider {
       from: this.from,
       to: inquiry.email,
       ...(this.acknowledgementReplyTo ? { replyTo: this.acknowledgementReplyTo } : {}),
-      subject: "We received your Agape Tech inquiry",
+      subject: `We received your ${business.brandName} inquiry`,
       text: [
         `Hello ${inquiry.name},`,
         "",
-        "Thank you for contacting Agape Tech. Your project inquiry has been received.",
+        `Thank you for contacting ${business.brandName}. Your project inquiry has been received.`,
         "We will review the information and respond through the contact information you provided.",
         "",
-        "Technology with Purpose.",
+        business.tagline,
       ].join("\n"),
-      html: `<div style="font-family:Arial,sans-serif;color:#0f172a"><p>Hello ${escapedName},</p><p>Thank you for contacting Agape Tech. Your project inquiry has been received.</p><p>We will review the information and respond through the contact information you provided.</p><p>Technology with Purpose.</p></div>`,
+      html: `<div style="font-family:Arial,sans-serif;color:#0f172a"><p>Hello ${escapedName},</p><p>Thank you for contacting ${escapeHtml(business.brandName)}. Your project inquiry has been received.</p><p>We will review the information and respond through the contact information you provided.</p><p>${escapeHtml(business.tagline)}</p></div>`,
     });
 
     if (error) throw new ContactDeliveryError(error.name);

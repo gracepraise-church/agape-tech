@@ -62,7 +62,16 @@ function getValidationFields(error: z.ZodError) {
 }
 
 function readEnvironment(environment?: ContactEnvironment): ContactEnvironment {
-  return environment ?? process.env;
+  const source = environment ?? process.env;
+  return {
+    RESEND_API_KEY: source.RESEND_API_KEY,
+    CONTACT_TO_EMAIL: source.CONTACT_TO_EMAIL,
+    CONTACT_FROM_EMAIL: source.CONTACT_FROM_EMAIL,
+    CONTACT_REPLY_TO_EMAIL: source.CONTACT_REPLY_TO_EMAIL,
+    CONTACT_SEND_ACKNOWLEDGEMENT: source.CONTACT_SEND_ACKNOWLEDGEMENT,
+    TURNSTILE_SECRET_KEY: source.TURNSTILE_SECRET_KEY,
+    NEXT_PUBLIC_TURNSTILE_SITE_KEY: source.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
+  };
 }
 
 function getEmailConfigurationIssue(environment: ContactEnvironment) {

@@ -178,6 +178,31 @@ describe("handleContactRequest", () => {
     expect(emailProvider.sendInquiry).not.toHaveBeenCalled();
   });
 
+  it("verifies Turnstile before sending the inquiry", async () => {
+    const verifyTurnstile = vi.fn().mockResolvedValue(true);
+    const result = await handleContactRequest(
+      request({ ...validInquiry, turnstileToken: "challenge-token" }, {
+        headers: {
+          "content-type": "application/json",
+          "x-nf-client-connection-ip": "192.0.2.10",
+        },
+      }),
+      {
+        environment: {
+          ...environment,
+          TURNSTILE_SECRET_KEY: "test-secret",
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY: "test-site-key",
+        },
+        emailProvider,
+        verifyTurnstile,
+      },
+    );
+
+    expect(result.statusCode).toBe(200);
+    expect(verifyTurnstile).toHaveBeenCalledWith("challenge-token", "test-secret", "192.0.2.10");
+    expect(emailProvider.sendInquiry).toHaveBeenCalledOnce();
+  });
+
   it("sends a valid inquiry and only then returns submitted", async () => {
     const now = new Date("2025-01-02T03:04:05.000Z");
     const result = await handleContactRequest(request(), {
@@ -199,6 +224,7 @@ describe("handleContactRequest", () => {
       },
       now.toISOString(),
     );
+    expect(emailProvider.sendAcknowledgement).not.toHaveBeenCalled();
   });
 
   it("does not claim success after provider failure", async () => {
@@ -226,5 +252,21 @@ describe("handleContactRequest", () => {
 
     expect(result.statusCode).toBe(200);
     expect(emailProvider.sendAcknowledgement).toHaveBeenCalledOnce();
+  });
+
+  it("does not turn a delivered inquiry into a failure when acknowledgement fails", async () => {
+    emailProvider.sendAcknowledgement.mockRejectedValue(new Error("private provider response"));
+    const logError = vi.fn();
+    const result = await handleContactRequest(request(), {
+      environment: { ...environment, CONTACT_SEND_ACKNOWLEDGEMENT: "true" },
+      emailProvider,
+      logError,
+    });
+
+    expect(result.statusCode).toBe(200);
+    expect(payload(result)).toEqual({ status: "submitted" });
+    expect(logError).toHaveBeenCalledWith(
+      expect.objectContaining({ category: "visitor_acknowledgement_failed" }),
+    );
   });
 });
