@@ -1,9 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { business } from "@/content/business";
 import { navigation, services } from "@/content/site";
 
 export function SiteFooter() {
+  const showLinkedIn = Boolean(business.linkedin);
+
   return (
     <footer className="site-footer">
       <div className="footer-main page-shell">
@@ -51,7 +54,11 @@ export function SiteFooter() {
           <Link className="footer-contact-link" href="/contact/">
             Start a conversation <ArrowUpRight aria-hidden="true" size={17} />
           </Link>
-          <span className="footer-social-note">LinkedIn profile coming soon</span>
+          {showLinkedIn ? (
+            <Link className="footer-social-note" href={business.linkedin!} rel="noreferrer" target="_blank">
+              LinkedIn
+            </Link>
+          ) : null}
         </div>
       </div>
       <div className="footer-bottom page-shell">
