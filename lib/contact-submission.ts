@@ -1,3 +1,5 @@
+import { contactInquirySchema } from "./contact/schema";
+
 export type ContactInquiry = {
   name: string;
   email: string;
@@ -10,6 +12,80 @@ export type ContactInquiry = {
 };
 
 export type ContactValidationErrors = Record<string, string>;
+
+const requiredFieldMessage = "Complete the required fields before submitting.";
+const shortSummaryMessage = "Please provide a little more detail about your project.";
+
+const requiredFields = [
+  "name",
+  "email",
+  "organization",
+  "service",
+  "projectStage",
+  "summary",
+] as const;
+
+function readFormValue(formData: FormData, field: string) {
+  return String(formData.get(field) ?? "");
+}
+
+/**
+ * Read the browser's submitted controls, rather than a separate React state
+ * snapshot. This keeps browser autofill and restored form values in the
+ * submission source of truth.
+ */
+export function readContactFormData(
+  formData: FormData,
+  turnstileToken = "",
+): ContactInquiry {
+  return {
+    name: readFormValue(formData, "name").trim(),
+    email: readFormValue(formData, "email").trim(),
+    organization: readFormValue(formData, "organization").trim(),
+    service: readFormValue(formData, "service").trim(),
+    projectStage: readFormValue(formData, "projectStage").trim(),
+    summary: readFormValue(formData, "summary").trim(),
+    website: readFormValue(formData, "website"),
+    ...(turnstileToken ? { turnstileToken } : {}),
+  };
+}
+
+/**
+ * Keep browser feedback useful without weakening the canonical server schema.
+ * Empty required controls share the form-level message; non-empty invalid
+ * values retain the schema's specific message.
+ */
+export function getContactFormValidationErrors(
+  inquiry: ContactInquiry,
+): ContactValidationErrors {
+  const parsed = contactInquirySchema.safeParse(inquiry);
+  if (parsed.success) return {};
+
+  const fields: ContactValidationErrors = {};
+  let hasMissingRequiredField = false;
+
+  for (const issue of parsed.error.issues) {
+    const field = issue.path[0];
+    if (typeof field !== "string") continue;
+
+    const value = field in inquiry ? String(inquiry[field as keyof ContactInquiry] ?? "").trim() : "";
+    if (requiredFields.includes(field as (typeof requiredFields)[number]) && !value) {
+      hasMissingRequiredField = true;
+      fields[field] = requiredFieldMessage;
+      continue;
+    }
+
+    if (field === "summary" && value.length > 0 && value.length < 20) {
+      fields.summary = shortSummaryMessage;
+      continue;
+    }
+
+    fields[field] ??= issue.message;
+  }
+
+  if (hasMissingRequiredField) fields._form = requiredFieldMessage;
+  return fields;
+}
 
 type ContactApiResult =
   | { status: "submitted" }

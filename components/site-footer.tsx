@@ -24,7 +24,9 @@ export function SiteFooter() {
             Engineering confidence into every digital experience — with care for the people and
             purpose behind the technology.
           </p>
-          <span className="footer-location-note">Built with purpose. Made to move things forward.</span>
+          <span className="footer-location-note">
+            {business.tagline} {business.companyHistory.establishedLabel}
+          </span>
         </div>
 
         <div className="footer-link-group">

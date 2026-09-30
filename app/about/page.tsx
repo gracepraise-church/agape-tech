@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Check } from "lucide-react";
 import { CapabilityIcon } from "@/components/capability-icon";
+import { EstablishedBadge } from "@/components/established-badge";
 import { PageHero } from "@/components/page-hero";
 import { SectionHeading } from "@/components/section-heading";
 import { createPageMetadata } from "@/content/metadata";
@@ -10,7 +11,7 @@ import { operatingPrinciples } from "@/content/phase-two";
 export const metadata = createPageMetadata({
   title: "About",
   description:
-    "Learn about Agape Tech's purpose-driven approach to quality, intelligence, integrity, service, and partnership.",
+    "Learn about Agape Tech, established in 2014, and its purpose-driven approach to quality, intelligence, integrity, service, and partnership.",
   path: "/about/",
 });
 
@@ -44,6 +45,25 @@ export default function AboutPage() {
             <Link className="text-link" href="/services/">
               See how we put this into practice <ArrowRight aria-hidden="true" size={15} />
             </Link>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="history-title" className="about-history-section section-space">
+        <div className="page-shell about-history-panel">
+          <EstablishedBadge />
+          <div className="about-history-copy">
+            <span className="eyebrow">
+              <span aria-hidden="true" className="eyebrow-mark" />
+              A FOUNDATION THAT ENDURES
+            </span>
+            <h2 id="history-title">More than a decade of engineering with purpose.</h2>
+            <p>
+              Agape Tech has been serving since 2014, bringing together quality engineering,
+              automation, software development, cloud, and technology consulting. Today, that
+              foundation extends into AI quality engineering, intelligent systems validation, and
+              modern digital delivery.
+            </p>
           </div>
         </div>
       </section>

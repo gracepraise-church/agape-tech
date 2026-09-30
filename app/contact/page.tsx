@@ -10,6 +10,8 @@ export const metadata = createPageMetadata({
   path: "/contact/",
 });
 
+const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim();
+
 export default function ContactPage() {
   return (
     <main id="main-content">
@@ -54,7 +56,7 @@ export default function ContactPage() {
               <span>Share only information you’re comfortable including in an initial inquiry.</span>
             </div>
           </aside>
-          <ContactForm turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} />
+          <ContactForm turnstileSiteKey={turnstileSiteKey} />
         </div>
       </section>
     </main>

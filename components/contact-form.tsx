@@ -5,6 +5,8 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from "react"
 import { contactServices, projectStages } from "@/lib/contact/options";
 import {
   ContactRequestError,
+  getContactFormValidationErrors,
+  readContactFormData,
   submitContactInquiry,
   type ContactValidationErrors,
 } from "@/lib/contact-submission";
@@ -56,37 +58,26 @@ export function ContactForm({ turnstileSiteKey = "" }: ContactFormProps) {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
-    if (!form.reportValidity()) {
+    const formData = new FormData(form);
+    const inquiry = readContactFormData(formData, turnstileSiteKey ? turnstileToken : "");
+    const clientValidationErrors = getContactFormValidationErrors(inquiry);
+    if (Object.keys(clientValidationErrors).length > 0) {
+      const firstField = Object.keys(clientValidationErrors).find((field) => field !== "_form");
       setSubmission({
         status: "error",
-        message: "Complete the required fields before submitting.",
-        fields: { _form: "Complete the required fields before submitting." },
+        message: clientValidationErrors._form ?? "Check the highlighted fields and try again.",
+        fields: clientValidationErrors,
       });
-      requestAnimationFrame(() => {
-        form.querySelector<HTMLElement>(":invalid")?.focus();
-      });
+      if (firstField) {
+        requestAnimationFrame(() => {
+          form.querySelector<HTMLElement>(`[name="${firstField}"]`)?.focus();
+        });
+      }
       return;
     }
-    if (turnstileSiteKey && !turnstileToken) {
-      const message = turnstileError || "Complete the security check before submitting.";
-      setTurnstileError(message);
-      setSubmission({ status: "error", message });
-      return;
-    }
-
-    const formData = new FormData(form);
     setSubmission({ status: "sending" });
     try {
-      const result = await submitContactInquiry({
-        name: String(formData.get("name") ?? "").trim(),
-        email: String(formData.get("email") ?? "").trim(),
-        organization: String(formData.get("organization") ?? "").trim(),
-        service: String(formData.get("service") ?? ""),
-        projectStage: String(formData.get("projectStage") ?? ""),
-        summary: String(formData.get("summary") ?? "").trim(),
-        website: String(formData.get("website") ?? ""),
-        ...(turnstileSiteKey ? { turnstileToken } : {}),
-      });
+      const result = await submitContactInquiry(inquiry);
       setSubmission(result);
       if (result.status === "submitted") {
         form.reset();

@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { BrandMarquee } from "@/components/brand-marquee";
 import { CodeStory } from "@/components/code-story/code-story";
+import { EstablishedBadge } from "@/components/established-badge";
 import { ProjectFinder } from "@/components/project-finder";
 import { EngineeringScrollStory } from "@/components/scroll-story/engineering-scroll-story";
 import { SectionHeading } from "@/components/section-heading";
@@ -41,6 +42,7 @@ const organizationSchema = {
   name: business.brandName,
   legalName: business.legalName,
   slogan: business.tagline,
+  foundingDate: String(business.companyHistory.establishedYear),
   ...(siteOrigin ? {
     url: siteOrigin.toString(),
     logo: new URL("/assets/brand/agape-tech-logo-stacked-transparent.webp", siteOrigin).toString(),
@@ -122,6 +124,23 @@ export default function HomePage() {
           <ArrowDown aria-hidden="true" size={15} />
         </a>
         <div aria-hidden="true" className="hero-bottom-line" />
+      </section>
+
+      <section aria-labelledby="credibility-title" className="credibility-section">
+        <div className="page-shell credibility-inner">
+          <EstablishedBadge />
+          <div className="credibility-copy">
+            <span className="eyebrow">
+              <span aria-hidden="true" className="eyebrow-mark" />
+              ESTABLISHED / EXPERIENCE
+            </span>
+            <h2 id="credibility-title">Established in 2014. Built for what comes next.</h2>
+            <p>
+              More than a decade of building, validating, and improving digital systems—now
+              applied to AI, automation, quality engineering, and software development.
+            </p>
+          </div>
+        </div>
       </section>
 
       <section aria-labelledby="experience-title" className="experience-section" id="experience">
