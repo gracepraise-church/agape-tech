@@ -6,7 +6,8 @@ Agape Tech is a statically exported Next.js site with a Netlify Function for con
 
 - Node.js 22
 - npm
-- A Resend account and a sender address verified with Resend to enable contact delivery
+- A Resend account and a sender address verified with Resend to enable email delivery
+- A Google Cloud service account and a shared Google Sheet to enable direct Sheets delivery
 
 ## Install and run locally
 
@@ -36,9 +37,13 @@ The local site is served by Netlify Dev at `http://localhost:8888`. `npm run dev
 | `CONTACT_SEND_ACKNOWLEDGEMENT` | No | Set to `true` to send a visitor acknowledgement after the internal inquiry email succeeds. Defaults to disabled. |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | No | Cloudflare Turnstile site key. This is public and is embedded in the static form at build time. |
 | `TURNSTILE_SECRET_KEY` | No | Server-only Turnstile secret. Set together with the public site key to enable server verification. |
+| `GOOGLE_CLIENT_EMAIL` | No | Server-only Google service-account email. Share the target spreadsheet with this address as an Editor. |
+| `GOOGLE_PRIVATE_KEY` | No | Server-only private key from the service-account JSON credentials. Store literal `\n` escapes or a supported multiline environment value. |
+| `GOOGLE_SHEET_ID` | No | The spreadsheet ID from the Google Sheet URL. |
+| `GOOGLE_SHEET_TAB` | No | Worksheet/tab title. Defaults to `Sheet1`. The first row must contain `name`, `email`, `organization`, `service`, `projectStage`, and `summary` headers. |
 | `NEXT_PUBLIC_SITE_URL` | For canonical metadata | Actual public site origin, set before building. It is used for canonical/social URLs and sitemap output. |
 
-If Resend settings are absent or invalid, the function returns an explicit configuration error and does not report a submission as successful. Turnstile is optional; when enabled, both keys must be set and verification failures prevent delivery. The handler includes bounded input validation, a honeypot, and same-origin checks. It does not use an in-memory rate limiter or claim durable rate limiting; configure additional abuse controls at the hosting or edge layer if needed.
+If Resend settings are absent or invalid, the function can still deliver through Google Sheets when its required settings are complete. If Google Sheets is configured and its API call fails, the function logs an internal error and returns a generic delivery failure without exposing credentials or provider details. Turnstile is optional; when enabled, both keys must be set and verification failures prevent delivery. The handler includes bounded input validation, a honeypot, and same-origin checks. It does not use an in-memory rate limiter or claim durable rate limiting; configure additional abuse controls at the hosting or edge layer if needed.
 
 The function does not write inquiries to an application database. Netlify and Resend process request or email data to provide their services; review their current terms and retention practices before enabling the form. The optional acknowledgement email is off by default.
 

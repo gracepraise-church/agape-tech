@@ -1,4 +1,6 @@
 import { randomUUID } from "node:crypto";
+import { JWT } from "google-auth-library";
+import { GoogleSpreadsheet } from "google-spreadsheet";
 import { z } from "zod";
 import { contactInquirySchema } from "./schema";
 import { createResendEmailProvider } from "./email-provider";
@@ -24,6 +26,13 @@ type ContactApiResponse = {
   code?: string;
   message?: string;
   fields?: Record<string, string>;
+};
+
+type GoogleSheetsConfiguration = {
+  clientEmail: string;
+  privateKey: string;
+  spreadsheetId: string;
+  worksheetTitle: string;
 };
 
 function response(statusCode: number, payload: ContactApiResponse): ContactFunctionResponse {
@@ -71,7 +80,79 @@ function readEnvironment(environment?: ContactEnvironment): ContactEnvironment {
     CONTACT_SEND_ACKNOWLEDGEMENT: source.CONTACT_SEND_ACKNOWLEDGEMENT,
     TURNSTILE_SECRET_KEY: source.TURNSTILE_SECRET_KEY,
     NEXT_PUBLIC_TURNSTILE_SITE_KEY: source.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
+    GOOGLE_SHEETS_WEBHOOK_URL: source.GOOGLE_SHEETS_WEBHOOK_URL,
+    GOOGLE_CLIENT_EMAIL: source.GOOGLE_CLIENT_EMAIL,
+    GOOGLE_PRIVATE_KEY: source.GOOGLE_PRIVATE_KEY,
+    GOOGLE_SHEET_ID: source.GOOGLE_SHEET_ID,
+    GOOGLE_SHEET_TAB: source.GOOGLE_SHEET_TAB,
   };
+}
+
+function getGoogleSheetsConfigurationIssue(environment: ContactEnvironment) {
+  const values = [
+    environment.GOOGLE_CLIENT_EMAIL?.trim(),
+    environment.GOOGLE_PRIVATE_KEY?.trim(),
+    environment.GOOGLE_SHEET_ID?.trim(),
+  ];
+  const configured = values.some(Boolean);
+  if (!configured) return undefined;
+  if (values.some((value) => !value)) return "incomplete_google_sheets_configuration";
+  return undefined;
+}
+
+function getGoogleSheetsConfiguration(
+  environment: ContactEnvironment,
+): GoogleSheetsConfiguration | undefined {
+  if (getGoogleSheetsConfigurationIssue(environment)) return undefined;
+
+  const clientEmail = environment.GOOGLE_CLIENT_EMAIL?.trim();
+  const privateKey = environment.GOOGLE_PRIVATE_KEY?.trim();
+  const spreadsheetId = environment.GOOGLE_SHEET_ID?.trim();
+  if (!clientEmail || !privateKey || !spreadsheetId) return undefined;
+
+  return {
+    clientEmail,
+    privateKey: privateKey.replace(/\\n/g, "\n"),
+    spreadsheetId,
+    worksheetTitle: environment.GOOGLE_SHEET_TAB?.trim() || "Sheet1",
+  };
+}
+
+async function appendInquiryToGoogleSheet(
+  configuration: GoogleSheetsConfiguration,
+  inquiry: {
+    name: string;
+    email: string;
+    organization: string;
+    service: string;
+    projectStage: string;
+    summary: string;
+  },
+) {
+  const auth = new JWT({
+    email: configuration.clientEmail,
+    key: configuration.privateKey,
+    scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+  });
+  const document = new GoogleSpreadsheet(configuration.spreadsheetId, auth);
+
+  await document.loadInfo();
+  const sheet = document.sheetsByTitle[configuration.worksheetTitle];
+  if (!sheet) {
+    throw new Error(`Google Sheet tab not found: ${configuration.worksheetTitle}`);
+  }
+
+  await sheet.addRow(
+    {
+      name: inquiry.name,
+      email: inquiry.email,
+      organization: inquiry.organization,
+      service: inquiry.service,
+      projectStage: inquiry.projectStage,
+      summary: inquiry.summary,
+    },
+    { insert: true },
+  );
 }
 
 function getEmailConfigurationIssue(environment: ContactEnvironment) {
@@ -208,8 +289,20 @@ export async function handleContactRequest(
   }
 
   const environment = readEnvironment(dependencies.environment);
-  const configurationIssue = getEmailConfigurationIssue(environment);
-  if (configurationIssue) {
+  const emailConfigurationIssue = getEmailConfigurationIssue(environment);
+  const googleSheetsConfigurationIssue = getGoogleSheetsConfigurationIssue(environment);
+  const googleSheetsConfiguration = getGoogleSheetsConfiguration(environment);
+  const hasWebhook = Boolean(environment.GOOGLE_SHEETS_WEBHOOK_URL?.trim());
+
+  if (googleSheetsConfigurationIssue) {
+    return response(503, {
+      status: "error",
+      code: "delivery_not_configured",
+      message: "Contact delivery is not configured in this environment.",
+    });
+  }
+
+  if (emailConfigurationIssue && !googleSheetsConfiguration && !hasWebhook) {
     return response(503, {
       status: "error",
       code: "delivery_not_configured",
@@ -253,15 +346,9 @@ export async function handleContactRequest(
     }
   }
 
-  const emailProvider =
-    dependencies.emailProvider ?? createResendEmailProvider(environment);
-  if (!emailProvider) {
-    return response(503, {
-      status: "error",
-      code: "delivery_not_configured",
-      message: "Contact delivery is not configured in this environment.",
-    });
-  }
+  const emailProvider = !emailConfigurationIssue
+    ? dependencies.emailProvider ?? createResendEmailProvider(environment)
+    : undefined;
 
   const requestId = randomUUID();
   const inquiry = {
@@ -274,32 +361,71 @@ export async function handleContactRequest(
   };
   const submittedAt = (dependencies.now ?? (() => new Date()))().toISOString();
 
-  try {
-    await emailProvider.sendInquiry(inquiry, submittedAt);
-  } catch {
-    (dependencies.logError ?? ((details) => console.error("Contact function delivery failed.", details)))({
-      requestId,
-      category: "internal_email_delivery_failed",
-    });
+  let deliverySuccess = false;
+  let googleSheetsDeliverySuccess = false;
+
+  if (emailProvider) {
+    try {
+      await emailProvider.sendInquiry(inquiry, submittedAt);
+      deliverySuccess = true;
+      if (
+        environment.CONTACT_SEND_ACKNOWLEDGEMENT?.trim().toLowerCase() === "true" &&
+        emailProvider.sendAcknowledgement
+      ) {
+        try {
+          await emailProvider.sendAcknowledgement(inquiry);
+        } catch {
+          (dependencies.logError ?? ((details) => console.error("Contact function acknowledgement failed.", details)))({
+            requestId,
+            category: "visitor_acknowledgement_failed",
+          });
+        }
+      }
+    } catch {
+      (dependencies.logError ?? ((details) => console.error("Contact function delivery failed.", details)))({
+        requestId,
+        category: "internal_email_delivery_failed",
+      });
+    }
+  }
+
+  if (googleSheetsConfiguration) {
+    try {
+      await appendInquiryToGoogleSheet(googleSheetsConfiguration, inquiry);
+      googleSheetsDeliverySuccess = true;
+      deliverySuccess = true;
+    } catch {
+      (dependencies.logError ?? ((details) => console.error("Contact function Google Sheets delivery failed.", details)))({
+        requestId,
+        category: "internal_google_sheets_delivery_failed",
+      });
+    }
+  } else if (environment.GOOGLE_SHEETS_WEBHOOK_URL?.trim()) {
+    try {
+      const result = await fetch(environment.GOOGLE_SHEETS_WEBHOOK_URL.trim(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...inquiry, submittedAt }),
+      });
+      if (result.ok) {
+        deliverySuccess = true;
+      } else {
+        throw new Error("Webhook returned non-OK status.");
+      }
+    } catch {
+      (dependencies.logError ?? ((details) => console.error("Contact function webhook failed.", details)))({
+        requestId,
+        category: "internal_webhook_delivery_failed",
+      });
+    }
+  }
+
+  if (!deliverySuccess || (googleSheetsConfiguration && !googleSheetsDeliverySuccess)) {
     return response(502, {
       status: "error",
       code: "delivery_failed",
       message: "We couldn’t submit your inquiry right now. Please try again.",
     });
-  }
-
-  if (
-    environment.CONTACT_SEND_ACKNOWLEDGEMENT?.trim().toLowerCase() === "true" &&
-    emailProvider.sendAcknowledgement
-  ) {
-    try {
-      await emailProvider.sendAcknowledgement(inquiry);
-    } catch {
-      (dependencies.logError ?? ((details) => console.error("Contact function acknowledgement failed.", details)))({
-        requestId,
-        category: "visitor_acknowledgement_failed",
-      });
-    }
   }
 
   return response(200, { status: "submitted" });

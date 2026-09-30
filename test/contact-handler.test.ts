@@ -1,4 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const googleSheetsMocks = vi.hoisted(() => ({
+  addRow: vi.fn(),
+  GoogleSpreadsheet: vi.fn(),
+  JWT: vi.fn(),
+  loadInfo: vi.fn(),
+}));
+
+vi.mock("google-auth-library", () => ({ JWT: googleSheetsMocks.JWT }));
+vi.mock("google-spreadsheet", () => ({ GoogleSpreadsheet: googleSheetsMocks.GoogleSpreadsheet }));
+
 import { handleContactRequest } from "../lib/contact/handler";
 import type { ContactEmailProvider, ContactEnvironment, ContactFunctionRequest } from "../lib/contact/types";
 
@@ -49,6 +60,20 @@ describe("handleContactRequest", () => {
 
   beforeEach(() => {
     emailProvider = provider();
+    googleSheetsMocks.addRow.mockReset().mockResolvedValue(undefined);
+    googleSheetsMocks.loadInfo.mockReset().mockResolvedValue(undefined);
+    googleSheetsMocks.JWT.mockReset().mockImplementation(function () {
+      return {};
+    });
+    googleSheetsMocks.GoogleSpreadsheet.mockReset().mockImplementation(function () {
+      return {
+        loadInfo: googleSheetsMocks.loadInfo,
+        sheetsByTitle: {
+          Leads: { addRow: googleSheetsMocks.addRow },
+          Sheet1: { addRow: googleSheetsMocks.addRow },
+        },
+      };
+    });
   });
 
   it("rejects non-POST requests", async () => {
@@ -259,6 +284,61 @@ describe("handleContactRequest", () => {
       now.toISOString(),
     );
     expect(emailProvider.sendAcknowledgement).not.toHaveBeenCalled();
+  });
+
+  it("appends a valid inquiry to the configured Google Sheet", async () => {
+    const result = await handleContactRequest(request(), {
+      environment: {
+        GOOGLE_CLIENT_EMAIL: "contact-form@example-project.iam.gserviceaccount.com",
+        GOOGLE_PRIVATE_KEY: "-----BEGIN PRIVATE KEY-----\\nprivate-key\\n-----END PRIVATE KEY-----\\n",
+        GOOGLE_SHEET_ID: "spreadsheet-id",
+        GOOGLE_SHEET_TAB: "Leads",
+      },
+    });
+
+    expect(result.statusCode).toBe(200);
+    expect(googleSheetsMocks.JWT).toHaveBeenCalledWith({
+      email: "contact-form@example-project.iam.gserviceaccount.com",
+      key: "-----BEGIN PRIVATE KEY-----\nprivate-key\n-----END PRIVATE KEY-----\n",
+      scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+    });
+    expect(googleSheetsMocks.GoogleSpreadsheet).toHaveBeenCalledWith(
+      "spreadsheet-id",
+      expect.anything(),
+    );
+    expect(googleSheetsMocks.addRow).toHaveBeenCalledWith(
+      {
+        name: validInquiry.name,
+        email: validInquiry.email,
+        organization: validInquiry.organization,
+        service: validInquiry.service,
+        projectStage: validInquiry.projectStage,
+        summary: validInquiry.summary,
+      },
+      { insert: true },
+    );
+  });
+
+  it("returns a generic delivery error when Google Sheets fails", async () => {
+    googleSheetsMocks.loadInfo.mockRejectedValueOnce(new Error("private provider details"));
+    const logError = vi.fn();
+
+    const result = await handleContactRequest(request(), {
+      environment: {
+        GOOGLE_CLIENT_EMAIL: "contact-form@example-project.iam.gserviceaccount.com",
+        GOOGLE_PRIVATE_KEY: "private-key",
+        GOOGLE_SHEET_ID: "spreadsheet-id",
+      },
+      logError,
+    });
+
+    expect(result.statusCode).toBe(502);
+    expect(payload(result).code).toBe("delivery_failed");
+    expect(result.body).not.toContain("private provider details");
+    expect(logError).toHaveBeenCalledWith({
+      requestId: expect.any(String),
+      category: "internal_google_sheets_delivery_failed",
+    });
   });
 
   it("does not claim success after provider failure", async () => {

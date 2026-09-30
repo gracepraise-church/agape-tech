@@ -11,6 +11,11 @@ export type ContactEnvironment = {
   CONTACT_SEND_ACKNOWLEDGEMENT?: string;
   TURNSTILE_SECRET_KEY?: string;
   NEXT_PUBLIC_TURNSTILE_SITE_KEY?: string;
+  GOOGLE_SHEETS_WEBHOOK_URL?: string;
+  GOOGLE_CLIENT_EMAIL?: string;
+  GOOGLE_PRIVATE_KEY?: string;
+  GOOGLE_SHEET_ID?: string;
+  GOOGLE_SHEET_TAB?: string;
 };
 
 export interface ContactEmailProvider {
