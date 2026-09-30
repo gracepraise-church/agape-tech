@@ -443,7 +443,7 @@
 
 /* Pinned desktop story. Enabled only by JS for wide, tall, motion-tolerant viewports. */
 
-/* Heights are reserved from first paint (the `js` class is set inline) so hydration never shifts the page. */
+/* Heights are reserved from first paint by the server-rendered `js` class so hydration never shifts the page. */
 @media (min-width: 1024px) and (min-height: 680px) and (prefers-reduced-motion: no-preference) {
   .js .story-section {
     padding-bottom: 0;

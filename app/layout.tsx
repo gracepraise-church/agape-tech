@@ -77,12 +77,38 @@ export const viewport: Viewport = {
   colorScheme: "dark",
 };
 
+// The `js` class is part of the server-rendered document so React hydrates the
+// exact same <html> element that the browser receives. When scripting is
+// disabled, this noscript stylesheet restores the normal flow layout instead
+// of reserving space for the client-side pinned stories.
+const noScriptStoryStyles = `
+@media (min-width: 1024px) and (min-height: 680px) and (prefers-reduced-motion: no-preference) {
+  .js .story-section {
+    padding-bottom: clamp(64px, 8vw, 110px);
+  }
+
+  .js .story-section .story-track {
+    height: auto;
+    margin-top: clamp(38px, 5vw, 64px);
+  }
+
+  .js .work-story-section {
+    padding-block: clamp(88px, 10vw, 142px);
+  }
+
+  .js .work-story-outer {
+    height: auto;
+  }
+}
+`;
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html className="js" lang="en">
       <head>
-        {/* Marks script support before first paint so pinned story heights are reserved without layout shift. */}
-        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+        <noscript>
+          <style>{noScriptStoryStyles}</style>
+        </noscript>
       </head>
       <body>
         <a className="skip-link" href="#main-content">
