@@ -121,13 +121,22 @@ async function verifyTurnstileToken(
 function isSameOrigin(headers: ContactFunctionRequest["headers"]) {
   const origin = getHeader(headers, "origin");
   if (!origin) return true;
+
   const requestHost =
     getHeader(headers, "x-forwarded-host")?.split(",")[0]?.trim() ??
     getHeader(headers, "host");
   if (!requestHost) return false;
 
   try {
-    return new URL(origin).host.toLowerCase() === requestHost.toLowerCase();
+    const originUrl = new URL(origin);
+    const forwardedProto = getHeader(headers, "x-forwarded-proto")?.split(",")[0]?.trim();
+
+    if (forwardedProto) {
+      const requestUrl = new URL(`${forwardedProto}://${requestHost}`);
+      return originUrl.origin === requestUrl.origin;
+    }
+
+    return originUrl.host.toLowerCase() === requestHost.toLowerCase();
   } catch {
     return false;
   }

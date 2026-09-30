@@ -143,6 +143,40 @@ describe("handleContactRequest", () => {
     expect(emailProvider.sendInquiry).not.toHaveBeenCalled();
   });
 
+  it("blocks same-host requests when the scheme differs from the forwarded origin", async () => {
+    const result = await handleContactRequest(
+      request(validInquiry, {
+        headers: {
+          "content-type": "application/json",
+          origin: "http://agape.example",
+          host: "agape.example",
+          "x-forwarded-proto": "https",
+        },
+      }),
+      { environment, emailProvider },
+    );
+
+    expect(result.statusCode).toBe(403);
+    expect(emailProvider.sendInquiry).not.toHaveBeenCalled();
+  });
+
+  it("accepts forwarded same-origin requests when the proxy passes through the correct scheme", async () => {
+    const result = await handleContactRequest(
+      request(validInquiry, {
+        headers: {
+          "content-type": "application/json",
+          origin: "https://agape.example",
+          host: "agape.example",
+          "x-forwarded-proto": "https",
+        },
+      }),
+      { environment, emailProvider },
+    );
+
+    expect(result.statusCode).toBe(200);
+    expect(emailProvider.sendInquiry).toHaveBeenCalledOnce();
+  });
+
   it("fails closed when Turnstile verification is not successful", async () => {
     const verifyTurnstile = vi.fn().mockResolvedValue(false);
     const result = await handleContactRequest(

@@ -7,20 +7,6 @@ export const navigation = [
   { label: "Contact", href: "/contact/" },
 ] as const;
 
-export const experienceOrganizations = [
-  "FOX",
-  "Deloitte",
-  "DHCS",
-  "Canoo",
-  "UnitedHealthcare",
-  "Sallie Mae",
-  "Insight Global",
-  "Google",
-  "Meta",
-  "Amazon",
-  "Meark Pharmacutical",
-] as const;
-
 export const capabilities = [
   {
     number: "01",

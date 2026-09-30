@@ -65,7 +65,7 @@ export function PageHero({
                 aria-hidden="true"
                 height={1254}
                 priority
-                src="/assets/brand/agape-tech-logo-icon-transparent.png"
+                src="/assets/brand/agape-tech-logo-icon-transparent.webp"
                 width={1254}
                 sizes="(max-width: 850px) 104px, 144px"
               />

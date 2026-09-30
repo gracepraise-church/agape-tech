@@ -113,7 +113,7 @@ export default function AboutPage() {
               <Image
                 alt=""
                 height={1254}
-                src="/assets/brand/agape-tech-logo-icon-transparent.png"
+                src="/assets/brand/agape-tech-logo-icon-transparent.webp"
                 width={1254}
                 sizes="(max-width: 620px) 76px, 104px"
               />
@@ -136,7 +136,7 @@ export default function AboutPage() {
       <section className="about-cta">
         <div className="page-shell about-cta-inner">
           <div className="about-cta-mark">
-            <Image alt="" aria-hidden="true" height={1254} src="/assets/brand/agape-tech-logo-icon-transparent.png" width={1254} sizes="60px" />
+            <Image alt="" aria-hidden="true" height={1254} src="/assets/brand/agape-tech-logo-icon-transparent.webp" width={1254} sizes="60px" />
           </div>
           <div>
             <span className="eyebrow"><span aria-hidden="true" className="eyebrow-mark" />PURPOSE IN PRACTICE</span>

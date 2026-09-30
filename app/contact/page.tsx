@@ -42,10 +42,10 @@ export default function ContactPage() {
             <div className="contact-promise">
               <span><ShieldCheck aria-hidden="true" size={17} /></span>
               <div>
-                <h3>No configured service, no transmission</h3>
+                <h3>Delivery status is explicit</h3>
                 <p>
-                  Submitting will confirm whether your inquiry was accepted. If delivery is not
-                  configured, the form will keep your entries here so you can try again later.
+                  Submitting sends your details to the contact function. If email delivery is not
+                  configured, the form reports the error and keeps your entries so you can try again.
                 </p>
               </div>
             </div>

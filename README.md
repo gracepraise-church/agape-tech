@@ -53,6 +53,14 @@ npm run build
 
 The production build exports the static site to `out/`. Netlify is configured in `netlify.toml` to publish that directory and bundle functions from `netlify/functions/`. Configure the environment variables in the Netlify site settings; no deployment is performed by these commands.
 
+If Turbopack cannot start its CSS worker in a restricted local environment, Next.js 16.3.7 also supports `npx next build --webpack`. This is a production build, not a dev-mode or experimental build. Keep the Netlify build command as `npm run build` unless the host has the same restriction.
+
+## Production launch and GitHub Desktop
+
+Use [the production launch checklist](docs/PRODUCTION-LAUNCH-CHECKLIST.md) to track owner-confirmed facts, domain/email verification, environment settings, functional smoke tests, and approvals. Do not replace missing business facts with sample contact details or organization names. Without `NEXT_PUBLIC_SITE_URL`, exported pages request no indexing and no canonical URL or populated sitemap is published. Set it to the final HTTPS **origin** (for example, `https://your-verified-domain`, not a path) in the build environment before approving production.
+
+Review local changes in GitHub Desktop, inspect the diff and tests, and commit only when the owner approves the content and configuration plan. Push/publish and deploy are separate owner-approved steps; no command in the local verification procedure deploys the site. Never commit `.env`, API keys, or DNS credentials. Rebuild after changing any `NEXT_PUBLIC_*` value because these values are embedded in the static export. A Netlify environment-variable change alone does not update an existing static build.
+
 ## Brand assets
 
-The supplied source artwork remains in `assets/brand/`. Identical copies in `public/assets/brand/` are served by the site; keep both sets unchanged when updating the application.
+The supplied source artwork remains in `assets/brand/`. Identical PNG copies in `public/assets/brand/` remain unchanged; optimized WebP derivatives there serve the main site imagery. Keep source art and PNG copies intact when refreshing derivatives.

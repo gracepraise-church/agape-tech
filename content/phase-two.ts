@@ -383,7 +383,7 @@ export const privacySections = [
   {
     title: "Contact form status",
     paragraphs: [
-      "The contact form asks for your name, email address, organization, service, project stage, and project summary. When server-side delivery is configured, submitting sends these details through a Netlify Function to the configured business inbox using Resend. Your email address is used as the reply-to address, not as the sender. An optional acknowledgement email is disabled by default.",
+      "The contact form asks for your name, email address, organization, service, project stage, and project summary. Submitting sends these details to a Netlify Function; when email delivery is configured, the function sends them to the configured business inbox using Resend. Your email address is used as the reply-to address, not as the sender. An optional acknowledgement email is disabled by default.",
       "If delivery is not configured or sending fails, the page reports that the inquiry was not accepted and keeps your entries in the browser form. The application does not write submissions to its own database. Netlify and Resend may process inquiry content and technical request information to provide their services; their own handling and retention practices apply. No specific retention period has been supplied.",
       "When enabled, Cloudflare Turnstile verifies a challenge token before delivery. The token and request information required for verification are sent to Cloudflare. Do not submit sensitive personal, financial, health, or confidential information through this initial inquiry form.",
     ],

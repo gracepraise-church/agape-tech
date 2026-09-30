@@ -62,7 +62,7 @@ export function SiteHeader() {
       <div className="header-inner">
         <Link className="brand-link" href="/" aria-label="Agape Tech home" onClick={closeMenu}>
           <Image
-            src="/assets/brand/agape-tech-logo-horizontal-transparent.png"
+            src="/assets/brand/agape-tech-logo-horizontal-transparent.webp"
             alt="Agape Tech — Technology with Purpose"
             width={2172}
             height={724}

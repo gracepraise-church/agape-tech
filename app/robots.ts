@@ -1,15 +1,16 @@
 import type { MetadataRoute } from "next";
+import { getSiteOrigin } from "@/content/site-url";
 
 export const dynamic = "force-static";
 
 export default function robots(): MetadataRoute.Robots {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  const siteOrigin = getSiteOrigin();
 
   return {
     rules: {
       userAgent: "*",
-      allow: "/",
+      ...(siteOrigin ? { allow: "/" } : { disallow: "/" }),
     },
-    ...(siteUrl ? { sitemap: new URL("/sitemap.xml", siteUrl).toString() } : {}),
+    ...(siteOrigin ? { sitemap: new URL("/sitemap.xml", siteOrigin).toString() } : {}),
   };
 }

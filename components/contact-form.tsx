@@ -40,7 +40,13 @@ export function ContactForm({ turnstileSiteKey = "" }: ContactFormProps) {
   }, []);
 
   const handleTurnstileError = useCallback(() => {
-    setTurnstileError("The security check could not load. Please refresh the check and try again.");
+    setTurnstileToken("");
+    setTurnstileError("The security check could not load. Try reloading it.");
+  }, []);
+
+  const handleTurnstileExpired = useCallback(() => {
+    setTurnstileToken("");
+    setTurnstileError("The security check expired. Complete it again.");
   }, []);
 
   const handleFieldChange = () => {
@@ -62,7 +68,9 @@ export function ContactForm({ turnstileSiteKey = "" }: ContactFormProps) {
       return;
     }
     if (turnstileSiteKey && !turnstileToken) {
-      setTurnstileError("Complete the security check before submitting.");
+      const message = turnstileError || "Complete the security check before submitting.";
+      setTurnstileError(message);
+      setSubmission({ status: "error", message });
       return;
     }
 
@@ -94,6 +102,7 @@ export function ContactForm({ turnstileSiteKey = "" }: ContactFormProps) {
       const fields = error instanceof ContactRequestError ? error.fields : undefined;
       if (fields?.turnstileToken) {
         setTurnstileToken("");
+        setTurnstileError(fields.turnstileToken);
         setTurnstileInstance((instance) => instance + 1);
       }
       setSubmission({
@@ -232,9 +241,23 @@ export function ContactForm({ turnstileSiteKey = "" }: ContactFormProps) {
             error={fieldErrors.turnstileToken ?? turnstileError}
             key={turnstileInstance}
             onError={handleTurnstileError}
+            onExpired={handleTurnstileExpired}
             onTokenChange={handleTurnstileTokenChange}
             siteKey={turnstileSiteKey}
           />
+        )}
+        {turnstileSiteKey && turnstileError && (
+          <button
+            className="text-link"
+            onClick={() => {
+              setTurnstileToken("");
+              setTurnstileError("");
+              setTurnstileInstance((instance) => instance + 1);
+            }}
+            type="button"
+          >
+            Reload security check
+          </button>
         )}
       </div>
       <div className="contact-form-bottom">

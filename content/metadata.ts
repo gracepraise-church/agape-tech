@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getSiteOrigin } from "./site-url";
 
 type PageMetadataInput = {
   title: string;
@@ -6,9 +7,7 @@ type PageMetadataInput = {
   path: string;
 };
 
-const siteOrigin = process.env.NEXT_PUBLIC_SITE_URL
-  ? new URL(process.env.NEXT_PUBLIC_SITE_URL)
-  : undefined;
+const siteOrigin = getSiteOrigin();
 
 export function createPageMetadata({
   title,
@@ -24,6 +23,7 @@ export function createPageMetadata({
   return {
     title,
     description,
+    ...(!siteOrigin ? { robots: { index: false, follow: false } } : {}),
     ...(canonicalUrl
       ? {
           alternates: { canonical: canonicalUrl },

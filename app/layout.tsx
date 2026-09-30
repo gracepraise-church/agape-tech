@@ -2,13 +2,12 @@ import type { Metadata, Viewport } from "next";
 import { ScrollRevealObserver } from "@/components/scroll-reveal-observer";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { getSiteOrigin } from "@/content/site-url";
 import "./globals.css";
 
 const description =
   "Agape Tech helps organizations build, automate, validate, and scale digital solutions through AI, quality engineering, software development, and technology consulting.";
-const siteOrigin = process.env.NEXT_PUBLIC_SITE_URL
-  ? new URL(process.env.NEXT_PUBLIC_SITE_URL)
-  : undefined;
+const siteOrigin = getSiteOrigin();
 const socialBrandImage = siteOrigin
   ? new URL("/assets/brand/agape-tech-icon-512.png", siteOrigin).toString()
   : undefined;
@@ -25,6 +24,7 @@ export const metadata: Metadata = {
     template: "%s | Agape Tech",
   },
   description,
+  ...(!siteOrigin ? { robots: { index: false, follow: false } } : {}),
   applicationName: "Agape Tech",
   keywords: [
     "technology consulting",

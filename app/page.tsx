@@ -21,13 +21,14 @@ import { ProjectFinder } from "@/components/project-finder";
 import { SectionHeading } from "@/components/section-heading";
 import {
   capabilities,
-  experienceOrganizations,
   featuredWork,
   industries,
   processStages,
   services,
   technologyGroups,
 } from "@/content/site";
+import { business } from "@/content/business";
+import { getSiteOrigin } from "@/content/site-url";
 
 const iconByName: Record<string, LucideIcon> = {
   activity: Activity,
@@ -42,14 +43,18 @@ const iconByName: Record<string, LucideIcon> = {
   workflow: Workflow,
 };
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+const siteOrigin = getSiteOrigin();
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "Agape Tech",
-  legalName: "Agape Tech LLC",
-  slogan: "Technology with Purpose",
-  ...(siteUrl ? { url: siteUrl } : {}),
+  name: business.brandName,
+  legalName: business.legalName,
+  slogan: business.tagline,
+  ...(siteOrigin ? {
+    url: siteOrigin.toString(),
+    logo: new URL("/assets/brand/agape-tech-logo-stacked-transparent.webp", siteOrigin).toString(),
+  } : {}),
+  ...(business.linkedin ? { sameAs: [business.linkedin] } : {}),
 };
 
 export default function HomePage() {
@@ -108,7 +113,7 @@ export default function HomePage() {
               className="hero-logo"
               height={1254}
               priority
-              src="/assets/brand/agape-tech-logo-stacked-transparent.png"
+              src="/assets/brand/agape-tech-logo-stacked-transparent.webp"
               width={1254}
               sizes="(max-width: 800px) 260px, (max-width: 1200px) 340px, 410px"
             />
@@ -133,35 +138,23 @@ export default function HomePage() {
           <div>
             <span className="eyebrow">
               <span className="eyebrow-mark" aria-hidden="true" />
-              EXPERIENCE ACROSS COMPLEX INDUSTRIES
+              SECTORS WE CAN SUPPORT
             </span>
             <h2 id="experience-title">A broader perspective, brought to your work.</h2>
           </div>
           <p>
-            Professional experience brought into Agape Tech spans enterprise media, healthcare,
-            public sector, automotive, financial technology, and digital platforms.
+            From media and healthcare to mobility and small business, each sector brings different
+            people, systems, and constraints worth understanding.
           </p>
         </div>
-        <div className="experience-marquee" aria-label="Organizations represented in professional experience">
-          <div className="marquee-track">
-            {[0, 1].map((copy) => (
-              <div aria-hidden={copy === 1} className="marquee-group" key={copy}>
-                {experienceOrganizations.map((organization, index) => (
-                  <span className="experience-name" key={`${copy}-${organization}`}>
-                    {organization}
-                    <span aria-hidden="true" className="experience-separator">
-                      {index % 2 === 0 ? "✳" : "·"}
-                    </span>
-                  </span>
-                ))}
-              </div>
+        <div className="experience-marquee">
+          <div className="marquee-track page-shell">
+            {industries.map((industry) => (
+              <span className="experience-name" key={industry.number}>{industry.title}</span>
             ))}
           </div>
         </div>
-        <p className="experience-disclaimer page-shell">
-          These names describe professional experience — not a claim that each organization is an
-          Agape Tech client.
-        </p>
+        <p className="experience-disclaimer page-shell">Areas of focus, not a claim of client relationships or past engagements.</p>
       </section>
 
       <section aria-labelledby="capabilities-title" className="capabilities-section section-space">
@@ -375,7 +368,7 @@ export default function HomePage() {
               alt=""
               aria-hidden="true"
               height={1254}
-              src="/assets/brand/agape-tech-logo-icon-transparent.png"
+              src="/assets/brand/agape-tech-logo-icon-transparent.webp"
               width={1254}
               sizes="(max-width: 600px) 72px, 96px"
             />

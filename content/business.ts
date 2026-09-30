@@ -14,7 +14,6 @@ export const business = {
   publicEmail: null as string | null,
   phone: null as string | null,
   linkedin: null as string | null,
-  productionUrl: process.env.NEXT_PUBLIC_SITE_URL || null,
   location: null as string | null,
   founder: {
     name: null,

@@ -13,7 +13,7 @@ export function SiteFooter() {
         <div className="footer-brand-column">
           <Link className="footer-brand" href="/" aria-label="Agape Tech home">
             <Image
-              src="/assets/brand/agape-tech-logo-horizontal-white.png"
+              src="/assets/brand/agape-tech-logo-horizontal-white.webp"
               alt="Agape Tech — Technology with Purpose"
               width={2172}
               height={724}
