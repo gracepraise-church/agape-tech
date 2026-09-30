@@ -67,6 +67,7 @@ export function SiteHeader() {
             width={2172}
             height={724}
             sizes="(max-width: 720px) 148px, 188px"
+            priority
           />
         </Link>
 
