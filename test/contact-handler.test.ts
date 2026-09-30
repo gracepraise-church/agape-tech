@@ -317,6 +317,92 @@ describe("handleContactRequest", () => {
       },
       { insert: true },
     );
+    expect(Object.keys(googleSheetsMocks.addRow.mock.calls[0][0])).toEqual([
+      "name",
+      "email",
+      "organization",
+      "service",
+      "projectStage",
+      "summary",
+    ]);
+  });
+
+  it("rejects incomplete Google Sheets configuration without calling a provider", async () => {
+    const result = await handleContactRequest(request(), {
+      environment: { GOOGLE_CLIENT_EMAIL: "contact-form@example-project.iam.gserviceaccount.com" },
+      emailProvider,
+    });
+
+    expect(result.statusCode).toBe(503);
+    expect(payload(result).code).toBe("delivery_not_configured");
+    expect(emailProvider.sendInquiry).not.toHaveBeenCalled();
+    expect(googleSheetsMocks.GoogleSpreadsheet).not.toHaveBeenCalled();
+  });
+
+  it("returns a generic delivery error when Google authentication fails", async () => {
+    googleSheetsMocks.JWT.mockReset().mockImplementation(function () {
+      throw new Error("private auth details");
+    });
+    const logError = vi.fn();
+
+    const result = await handleContactRequest(request(), {
+      environment: {
+        GOOGLE_CLIENT_EMAIL: "contact-form@example-project.iam.gserviceaccount.com",
+        GOOGLE_PRIVATE_KEY: "private-key",
+        GOOGLE_SHEET_ID: "spreadsheet-id",
+      },
+      logError,
+    });
+
+    expect(result.statusCode).toBe(502);
+    expect(payload(result).code).toBe("delivery_failed");
+    expect(result.body).not.toContain("private auth details");
+    expect(logError).toHaveBeenCalledWith({
+      requestId: expect.any(String),
+      category: "internal_google_sheets_delivery_failed",
+    });
+  });
+
+  it("uses the legacy webhook only when direct Google Sheets is not configured", async () => {
+    const fetchMock = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue(new Response(null, { status: 204 }));
+
+    try {
+      const result = await handleContactRequest(request(), {
+        environment: { GOOGLE_SHEETS_WEBHOOK_URL: "https://example.test/contact-hook" },
+      });
+
+      expect(result.statusCode).toBe(200);
+      expect(fetchMock).toHaveBeenCalledWith(
+        "https://example.test/contact-hook",
+        expect.objectContaining({ method: "POST" }),
+      );
+      expect(googleSheetsMocks.GoogleSpreadsheet).not.toHaveBeenCalled();
+    } finally {
+      fetchMock.mockRestore();
+    }
+  });
+
+  it("does not claim success when email succeeds but configured Sheets persistence fails", async () => {
+    googleSheetsMocks.loadInfo.mockRejectedValueOnce(new Error("private Sheets details"));
+    const logError = vi.fn();
+
+    const result = await handleContactRequest(request(), {
+      environment: {
+        ...environment,
+        GOOGLE_CLIENT_EMAIL: "contact-form@example-project.iam.gserviceaccount.com",
+        GOOGLE_PRIVATE_KEY: "private-key",
+        GOOGLE_SHEET_ID: "spreadsheet-id",
+      },
+      emailProvider,
+      logError,
+    });
+
+    expect(result.statusCode).toBe(502);
+    expect(emailProvider.sendInquiry).toHaveBeenCalledOnce();
+    expect(payload(result).code).toBe("delivery_failed");
+    expect(result.body).not.toContain("private Sheets details");
   });
 
   it("returns a generic delivery error when Google Sheets fails", async () => {

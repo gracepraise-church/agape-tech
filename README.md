@@ -1,6 +1,6 @@
 # Agape Tech
 
-Agape Tech is a statically exported Next.js site with a Netlify Function for contact inquiries. The contact function validates requests on the server and, when configured, sends inquiry email through Resend. The static site remains buildable without delivery credentials.
+Agape Tech is a statically exported Next.js site with a Netlify Function for contact inquiries. The contact function validates requests on the server and, when configured, sends inquiry email through Resend and/or appends inquiries to Google Sheets. The static site remains buildable without delivery credentials.
 
 ## Requirements
 
@@ -16,7 +16,7 @@ npm install
 cp .env.example .env
 ```
 
-Fill in the server-only contact settings in `.env` to test email delivery. Do not put credentials in `NEXT_PUBLIC_*` variables, commit them, or use real credentials in tests.
+Fill in the server-only contact settings in `.env` to test delivery. The authoritative Netlify, Google Sheets, environment-variable, and owner-action instructions are in [docs/NETLIFY-PRODUCTION-SETUP.md](docs/NETLIFY-PRODUCTION-SETUP.md). Do not put credentials in `NEXT_PUBLIC_*` variables, commit them, or use real credentials in tests.
 
 Run the site and Netlify Functions together:
 
@@ -41,11 +41,14 @@ The local site is served by Netlify Dev at `http://localhost:8888`. `npm run dev
 | `GOOGLE_PRIVATE_KEY` | No | Server-only private key from the service-account JSON credentials. Store literal `\n` escapes or a supported multiline environment value. |
 | `GOOGLE_SHEET_ID` | No | The spreadsheet ID from the Google Sheet URL. |
 | `GOOGLE_SHEET_TAB` | No | Worksheet/tab title. Defaults to `Sheet1`. The first row must contain `name`, `email`, `organization`, `service`, `projectStage`, and `summary` headers. |
+| `GOOGLE_SHEETS_WEBHOOK_URL` | No | Legacy server-only webhook fallback. It is used only when the direct Google Sheets configuration is absent; direct Sheets takes precedence when complete. |
 | `NEXT_PUBLIC_SITE_URL` | For canonical metadata | Actual public site origin, set before building. It is used for canonical/social URLs and sitemap output. |
 
 If Resend settings are absent or invalid, the function can still deliver through Google Sheets when its required settings are complete. If Google Sheets is configured and its API call fails, the function logs an internal error and returns a generic delivery failure without exposing credentials or provider details. Turnstile is optional; when enabled, both keys must be set and verification failures prevent delivery. The handler includes bounded input validation, a honeypot, and same-origin checks. It does not use an in-memory rate limiter or claim durable rate limiting; configure additional abuse controls at the hosting or edge layer if needed.
 
 The function does not write inquiries to an application database. Netlify and Resend process request or email data to provide their services; review their current terms and retention practices before enabling the form. The optional acknowledgement email is off by default.
+
+For the complete deployment variable classification and owner-only cloud steps, use [docs/NETLIFY-PRODUCTION-SETUP.md](docs/NETLIFY-PRODUCTION-SETUP.md).
 
 ## Checks
 

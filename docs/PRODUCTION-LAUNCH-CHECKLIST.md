@@ -11,6 +11,7 @@ This checklist prepares the site for launch; it does not authorize deployment. O
 - [x] Complete a production static export with the installed Next.js 16.3.7 documented Webpack option (`npx next build --webpack`). The normal Turbopack build remains the configured host build; only the local VS Code sandbox blocks its CSS worker from binding a port.
 - [x] Confirm the export contains the homepage, six public subpages, metadata routes, manifest, and 404 page.
 - [x] Configure baseline Netlify response headers for MIME sniffing, framing, referrer data, and unused browser capabilities.
+- [x] Record the authoritative Netlify/Google environment contract in `docs/NETLIFY-PRODUCTION-SETUP.md`.
 - [x] Confirm unverified organization names are not presented as clients or professional experience.
 - [ ] Owner confirms the legal name, brand, tagline, service descriptions, sector positioning, and all public claims.
 - [ ] Owner supplies and approves any public address/location, phone, email, LinkedIn URL, leadership biography/photo/title, or organization names before they are added.
@@ -22,8 +23,9 @@ This checklist prepares the site for launch; it does not authorize deployment. O
 
 - [ ] With owner approval, connect the approved repository and production branch.
 - [ ] Confirm Node 22, build command `npm run build`, publish directory `out`, Functions directory `netlify/functions`, and esbuild bundling match `netlify.toml`.
-- [ ] Configure required runtime variables: `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, and `CONTACT_FROM_EMAIL`.
+- [ ] Configure the approved delivery channel in Netlify: Resend (`RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`) and/or direct Google Sheets (`GOOGLE_CLIENT_EMAIL`, `GOOGLE_PRIVATE_KEY`, `GOOGLE_SHEET_ID`, optional `GOOGLE_SHEET_TAB`).
 - [ ] Configure required build variable: `NEXT_PUBLIC_SITE_URL`.
+- [ ] If the legacy fallback is intentionally retained, configure server-only `GOOGLE_SHEETS_WEBHOOK_URL`; direct Sheets takes precedence when complete.
 - [ ] If enabled, configure `NEXT_PUBLIC_TURNSTILE_SITE_KEY` at build time and `TURNSTILE_SECRET_KEY` at function runtime for the same widget.
 - [ ] If approved, configure optional `CONTACT_REPLY_TO_EMAIL` and `CONTACT_SEND_ACKNOWLEDGEMENT=true`.
 - [ ] Deliberately configure preview-build canonical/indexing behavior and access controls; do not expose production secrets to untrusted preview contexts.
@@ -32,7 +34,7 @@ This checklist prepares the site for launch; it does not authorize deployment. O
 
 ## DOMAIN/DNS
 
-- [ ] Owner selects the production domain and explicitly approves registrar, DNS, and Netlify domain changes.
+- [ ] Owner confirms the production origin is `https://www.agapetech-llc.com` and explicitly approves registrar, DNS, and Netlify domain changes.
 - [ ] Use Netlify's current instructions for the assigned site to configure the apex and `www` records; do not guess record values.
 - [ ] Verify domain ownership and SSL issuance.
 - [ ] Choose the primary HTTPS host and redirect the alternate host to it.
@@ -50,6 +52,18 @@ This checklist prepares the site for launch; it does not authorize deployment. O
 - [ ] Decide whether to send visitor acknowledgements; if enabled, approve `CONTACT_REPLY_TO_EMAIL` and review the acknowledgement subject, text, and HTML.
 - [ ] After an approved deployment, send a non-sensitive test inquiry and confirm internal receipt, reply-to behavior, and optional acknowledgement.
 - [ ] Review Resend activity and Netlify logs for failures without recording submitted content or secrets.
+
+## GOOGLE SHEETS
+
+- [ ] Confirm Apps Script is not part of this architecture; do not create a parallel Apps Script submission path.
+- [ ] Enable the Google Sheets API in the owner’s Google Cloud project.
+- [ ] Create or verify the service account and current key; revoke any previously exposed or retired key.
+- [ ] Share the target spreadsheet with `GOOGLE_CLIENT_EMAIL` as an Editor.
+- [ ] Confirm the worksheet header row is exactly `name`, `email`, `organization`, `service`, `projectStage`, `summary`.
+- [ ] Configure `GOOGLE_CLIENT_EMAIL`, `GOOGLE_PRIVATE_KEY`, `GOOGLE_SHEET_ID`, and optional `GOOGLE_SHEET_TAB` in Netlify function/runtime scope.
+- [ ] Confirm Google credentials do not use `NEXT_PUBLIC_` and no credential JSON is committed.
+- [ ] Verify one approved non-sensitive submission creates exactly one new row after deployment.
+- [ ] Verify missing worksheet, authentication, permission, invalid-ID, and API failure states remain generic `502` errors.
 
 ## TURNSTILE
 

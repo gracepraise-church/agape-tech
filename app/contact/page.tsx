@@ -44,7 +44,7 @@ export default function ContactPage() {
               <div>
                 <h3>Delivery status is explicit</h3>
                 <p>
-                  Submitting sends your details to the contact function. If email delivery is not
+                  Submitting sends your details to the contact function. If contact delivery is not
                   configured, the form reports the error and keeps your entries so you can try again.
                 </p>
               </div>
