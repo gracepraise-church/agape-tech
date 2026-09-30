@@ -4,6 +4,7 @@ type SectionHeadingProps = {
   description?: string;
   centered?: boolean;
   light?: boolean;
+  id?: string;
 };
 
 export function SectionHeading({
@@ -12,6 +13,7 @@ export function SectionHeading({
   description,
   centered = false,
   light = false,
+  id,
 }: SectionHeadingProps) {
   return (
     <div
@@ -21,7 +23,7 @@ export function SectionHeading({
         <span className="eyebrow-mark" aria-hidden="true" />
         {eyebrow}
       </span>
-      <h2>{title}</h2>
+      <h2 id={id}>{title}</h2>
       {description && <p>{description}</p>}
     </div>
   );

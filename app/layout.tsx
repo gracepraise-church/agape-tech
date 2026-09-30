@@ -4,6 +4,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { getSiteOrigin } from "@/content/site-url";
 import "./globals.css";
+import "./interactive.css";
 
 const description =
   "Agape Tech helps organizations build, automate, validate, and scale digital solutions through AI, quality engineering, software development, and technology consulting.";
@@ -78,7 +79,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Marks script support before first paint so pinned story heights are reserved without layout shift. */}
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+      </head>
       <body>
         <a className="skip-link" href="#main-content">
           Skip to content

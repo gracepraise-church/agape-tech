@@ -1,15 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
-  Activity,
   ArrowDown,
   ArrowRight,
   ArrowUpRight,
   BrainCircuit,
-  Check,
-  Cloud,
   Compass,
-  Database,
   Layers3,
   ScanLine,
   ShieldCheck,
@@ -17,25 +13,20 @@ import {
   Workflow,
   type LucideIcon,
 } from "lucide-react";
+import { BrandMarquee } from "@/components/brand-marquee";
+import { CodeStory } from "@/components/code-story/code-story";
 import { ProjectFinder } from "@/components/project-finder";
+import { EngineeringScrollStory } from "@/components/scroll-story/engineering-scroll-story";
 import { SectionHeading } from "@/components/section-heading";
-import {
-  capabilities,
-  featuredWork,
-  industries,
-  processStages,
-  services,
-  technologyGroups,
-} from "@/content/site";
+import { WorkScrollStory } from "@/components/work-story/work-scroll-story";
 import { business } from "@/content/business";
+import { signalSteps } from "@/content/interactive";
+import { capabilities, industries, services } from "@/content/site";
 import { getSiteOrigin } from "@/content/site-url";
 
 const iconByName: Record<string, LucideIcon> = {
-  activity: Activity,
   brain: BrainCircuit,
-  cloud: Cloud,
   compass: Compass,
-  database: Database,
   layers: Layers3,
   scan: ScanLine,
   shield: ShieldCheck,
@@ -93,12 +84,12 @@ export default function HomePage() {
                 Explore services <ArrowRight aria-hidden="true" size={16} />
               </Link>
             </div>
-            <div className="hero-capabilities" aria-label="Core capabilities">
-              <span>AI engineering</span>
-              <span>Quality engineering</span>
-              <span>Automation</span>
-              <span>Digital solutions</span>
-            </div>
+            <p className="hero-tagline">Build smarter. Test deeper. Ship with confidence.</p>
+            <ol aria-label="Engineering signal path" className="hero-signal">
+              {signalSteps.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
           </div>
 
           <div className="hero-art" aria-label="Agape Tech brand">
@@ -141,6 +132,9 @@ export default function HomePage() {
               SECTORS WE CAN SUPPORT
             </span>
             <h2 id="experience-title">A broader perspective, brought to your work.</h2>
+            <Link className="text-link experience-link" href="/solutions/">
+              Explore solutions <ArrowUpRight aria-hidden="true" size={16} />
+            </Link>
           </div>
           <p>
             From media and healthcare to mobility and small business, each sector brings different
@@ -162,6 +156,7 @@ export default function HomePage() {
           <SectionHeading
             description="A connected set of capabilities for the moments when your next step needs both imagination and rigor."
             eyebrow="WHAT WE BRING"
+            id="capabilities-title"
             title="Good technology moves people forward."
           />
           <div className="capability-grid">
@@ -186,12 +181,17 @@ export default function HomePage() {
         </div>
       </section>
 
+      <EngineeringScrollStory />
+
+      <CodeStory />
+
       <section aria-labelledby="services-title" className="services-section section-space" id="services">
         <div className="page-shell">
           <div className="section-heading-row">
             <SectionHeading
               description="The right support for a specific need — or a partner to connect the bigger picture."
               eyebrow="CAPABILITIES, APPLIED"
+              id="services-title"
               title="What we do."
             />
             <Link className="text-link section-aside-link" href="/services/">
@@ -227,138 +227,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section aria-labelledby="process-title" className="process-section section-space">
-        <div className="page-shell">
-          <div className="process-intro">
-            <SectionHeading
-              description="A calm, collaborative process that makes complex work easier to see, shape, and ship."
-              eyebrow="HOW WE WORK"
-              title="Clarity at every stage."
-            />
-            <p className="process-side-note">
-              <span className="process-side-mark" aria-hidden="true" />
-              No mystery handoffs. No technology for technology’s sake. Just intentional progress,
-              together.
-            </p>
-          </div>
-          <ol className="process-list">
-            {processStages.map((stage) => (
-              <li className="process-step" key={stage.number}>
-                <span className="process-number">{stage.number}</span>
-                <div className="process-step-copy">
-                  <h3>{stage.title}</h3>
-                  <p>{stage.description}</p>
-                </div>
-                <span className="process-step-mark" aria-hidden="true">
-                  <Check size={16} />
-                </span>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      <section aria-labelledby="solutions-title" className="solutions-section section-space">
-        <div className="page-shell">
-          <div className="section-heading-row">
-            <SectionHeading
-              description="Different industries, shared human needs: trustworthy systems, less friction, and room to grow."
-              eyebrow="SOLUTIONS THAT FIT"
-              title="Built around your world."
-            />
-            <Link className="text-link section-aside-link" href="/solutions/">
-              Explore solutions <ArrowUpRight aria-hidden="true" size={16} />
-            </Link>
-          </div>
-          <div className="industry-grid">
-            {industries.map((industry) => (
-              <Link className="industry-card" href="/solutions/" key={industry.number}>
-                <span className="industry-number">{industry.number}</span>
-                <h3>{industry.title}</h3>
-                <p>{industry.description}</p>
-                <ArrowUpRight aria-hidden="true" className="industry-arrow" size={18} />
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section aria-labelledby="work-title" className="work-section section-space">
-        <div className="page-shell">
-          <div className="section-heading-row">
-            <SectionHeading
-              description="Representative case-study directions, shaped by professional experience. Shared here as examples of the problems we can help solve."
-              eyebrow="SELECTED WORK"
-              title="Thoughtful work. Practical impact."
-            />
-            <Link className="text-link section-aside-link" href="/work/">
-              See the work <ArrowUpRight aria-hidden="true" size={16} />
-            </Link>
-          </div>
-          <div className="work-grid">
-            {featuredWork.map((item, index) => (
-              <article className={`work-card work-card-${index + 1}`} key={item.title}>
-                <div className="work-art" aria-hidden="true">
-                  <div className="work-art-lines" />
-                  <div className="work-art-orb" />
-                  <span className="work-art-code">CASE / 0{index + 1}</span>
-                  <span className="work-art-caption">
-                    {index === 0 ? "INTELLIGENCE" : index === 1 ? "AUTOMATION" : "VALIDATION"}
-                  </span>
-                </div>
-                <div className="work-card-content">
-                  <span className="card-eyebrow">{item.category}</span>
-                  <h3>{item.title}</h3>
-                  <p>{item.description}</p>
-                  <div className="work-tags">
-                    {item.tags.map((tag) => (
-                      <span key={tag}>{tag}</span>
-                    ))}
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-          <p className="work-disclaimer">
-            Illustrative engagement categories only. No metrics, client relationships, or confidential work are implied.
-          </p>
-        </div>
-      </section>
-
-      <section aria-labelledby="technology-title" className="technology-section section-space">
-        <div className="page-shell technology-layout">
-          <div className="technology-intro">
-            <SectionHeading
-              description="Tools are most powerful when they fit the problem. We work across a considered ecosystem — without chasing the noise."
-              eyebrow="THE TOOLKIT"
-              title="Technology, in its right place."
-            />
-            <span className="technology-footnote">A sample of tools and platforms we work with.</span>
-          </div>
-          <div className="technology-groups">
-            {technologyGroups.map((group) => {
-              const Icon = iconByName[group.icon];
-              return (
-                <div className="technology-group" key={group.title}>
-                  <div className="technology-group-heading">
-                    <span className="technology-icon">
-                      <Icon aria-hidden="true" size={18} strokeWidth={1.6} />
-                    </span>
-                    <h3>{group.title}</h3>
-                  </div>
-                  <div className="technology-tags">
-                    {group.technologies.map((technology) => (
-                      <span key={technology}>{technology}</span>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+      <WorkScrollStory />
 
       <ProjectFinder />
+
+      <BrandMarquee />
 
       <section aria-labelledby="purpose-title" className="purpose-section">
         <div className="purpose-light" aria-hidden="true" />

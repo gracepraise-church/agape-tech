@@ -77,34 +77,6 @@ export const services = [
   },
 ] as const;
 
-export const processStages = [
-  {
-    number: "01",
-    title: "Discover",
-    description: "Understand the people, goals, constraints, and real problem before choosing a solution.",
-  },
-  {
-    number: "02",
-    title: "Design",
-    description: "Shape an approach that balances experience, quality, technical fit, and room to grow.",
-  },
-  {
-    number: "03",
-    title: "Engineer",
-    description: "Build with care, keeping the work visible and decisions grounded in your context.",
-  },
-  {
-    number: "04",
-    title: "Validate",
-    description: "Test the experience and the edges, so risks surface before they become surprises.",
-  },
-  {
-    number: "05",
-    title: "Deliver",
-    description: "Ship thoughtfully, share what was learned, and leave your team ready for what is next.",
-  },
-] as const;
-
 export const industries = [
   {
     number: "01",
@@ -130,58 +102,6 @@ export const industries = [
     number: "05",
     title: "Small Business & Nonprofit",
     description: "Make thoughtful technology accessible to teams working with limited time and resources.",
-  },
-] as const;
-
-export const featuredWork = [
-  {
-    category: "AI / ML QUALITY ENGINEERING",
-    title: "Making AI experiences more dependable.",
-    description:
-      "A representative engagement shape for evaluating AI behavior, quality risks, and the experience around intelligent features.",
-    tags: ["AI evaluation", "Quality strategy", "Guardrails"],
-  },
-  {
-    category: "ENTERPRISE AUTOMATION ARCHITECTURE",
-    title: "A clearer path to confident releases.",
-    description:
-      "An example of how a maintainable automation approach can connect meaningful coverage with everyday delivery.",
-    tags: ["Test architecture", "Playwright", "CI/CD"],
-  },
-  {
-    category: "HEALTHCARE API & DATA VALIDATION",
-    title: "Bringing clarity to connected systems.",
-    description:
-      "A representative case-study direction for validating APIs and data flows across complex service environments.",
-    tags: ["API testing", "Data quality", "Integration"],
-  },
-] as const;
-
-export const technologyGroups = [
-  {
-    title: "AI & Intelligent Systems",
-    technologies: ["OpenAI", "LangChain", "LangGraph", "AWS Bedrock"],
-    icon: "brain",
-  },
-  {
-    title: "Quality Engineering",
-    technologies: ["Playwright", "TypeScript", "Selenium", "Appium"],
-    icon: "scan",
-  },
-  {
-    title: "Performance",
-    technologies: ["k6", "JMeter", "Locust", "Load strategy"],
-    icon: "activity",
-  },
-  {
-    title: "Cloud & DevOps",
-    technologies: ["AWS", "Azure", "Docker", "GitHub Actions"],
-    icon: "cloud",
-  },
-  {
-    title: "Data & Integration",
-    technologies: ["REST APIs", "PostgreSQL", "SQL Server", "Snowflake"],
-    icon: "database",
   },
 ] as const;
 
