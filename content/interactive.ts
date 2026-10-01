@@ -282,27 +282,139 @@ export function publishedExperienceItems(
   return published.length > 0 ? published : industries.map((industry) => industry.title);
 }
 
+export type BrandWordmark = {
+  name: string;
+  mark: string;
+  logoAsset?: string;
+  logoSurface?: "light";
+};
+
+const experienceWordmarkByName: Record<string, string> = {
+  "California Department of Health Care Services (DHCS)": "DHCS",
+  Canoo: "CANOO",
+  "CoStar Group": "COSTAR",
+  Deloitte: "DELOITTE",
+  "Fox Corporation": "FOX",
+  "Insight Global": "IG",
+  "Sallie Mae": "SM",
+  "Ten-X / Xome": "TEN-X",
+  "UnitedHealth Group": "UHG",
+};
+
+const experienceLogoAssetByName: Record<string, string> = {
+  "California Department of Health Care Services (DHCS)": "/assets/brand/marquee/dhcs.png",
+  Canoo: "/assets/brand/marquee/canoo.svg",
+  "CoStar Group": "/assets/brand/marquee/costar.svg",
+  Deloitte: "/assets/brand/marquee/deloitte.svg",
+  "Fox Corporation": "/assets/brand/marquee/fox.svg",
+  "Sallie Mae": "/assets/brand/marquee/sallie-mae.svg",
+  "UnitedHealth Group": "/assets/brand/marquee/unitedhealth.svg",
+};
+
+const experienceLogoSurfaceByName: Record<string, "light"> = {
+  "California Department of Health Care Services (DHCS)": "light",
+  Canoo: "light",
+  "CoStar Group": "light",
+  Deloitte: "light",
+  "Fox Corporation": "light",
+  "UnitedHealth Group": "light",
+};
+
+export function publishedExperienceWordmarks(
+  organizations: readonly ExperienceOrganization[] = experienceOrganizations,
+): BrandWordmark[] {
+  return publishedExperienceItems(organizations).map((name) => ({
+    name,
+    mark: experienceWordmarkByName[name] ?? name.slice(0, 3).toUpperCase(),
+    ...(experienceLogoAssetByName[name]
+      ? {
+          logoAsset: experienceLogoAssetByName[name],
+          ...(experienceLogoSurfaceByName[name]
+            ? { logoSurface: experienceLogoSurfaceByName[name] }
+            : {}),
+        }
+      : {}),
+  }));
+}
+
 export const technologyMarquee = [
   "Playwright",
-  "TypeScript",
   "Selenium",
+  "Cypress",
   "Appium",
-  "Katalon",
+  "Katalon Studio",
   "Postman",
   "REST Assured",
-  "GitHub Actions",
-  "Jenkins",
-  "Azure DevOps",
-  "Docker",
-  "AWS",
-  "Azure",
-  "AWS Bedrock",
+  "TestRail",
+  "JUnit",
+  "TypeScript",
+  "Java",
+  "Python",
+  "Kafka",
   "k6",
   "JMeter",
-  "TestRail",
-  "Jira",
-  "LangChain",
-  "LangGraph",
+  "AWS",
+  "Microsoft Azure",
+  "Docker",
+  "GitHub",
+  "Jenkins",
+  "MySQL",
+  "MongoDB",
+  "Grafana",
+  "OpenAI",
 ] as const;
+
+const technologyMarkByName: Record<string, string> = {
+  Playwright: "PW",
+  Selenium: "SE",
+  Cypress: "CY",
+  Appium: "AP",
+  "Katalon Studio": "KT",
+  Postman: "PM",
+  "REST Assured": "RA",
+  TestRail: "TR",
+  JUnit: "JU",
+  TypeScript: "TS",
+  Java: "JAVA",
+  Python: "PY",
+  Kafka: "KF",
+  k6: "K6",
+  JMeter: "JM",
+  AWS: "AWS",
+  "Microsoft Azure": "AZ",
+  Docker: "DK",
+  GitHub: "GH",
+  Jenkins: "JK",
+  MySQL: "SQL",
+  MongoDB: "MG",
+  Grafana: "GR",
+  OpenAI: "AI",
+};
+
+const technologyLogoAssetByName: Record<string, string> = {
+  Selenium: "/assets/brand/marquee/selenium.svg",
+  Cypress: "/assets/brand/marquee/cypress.svg",
+  Appium: "/assets/brand/marquee/appium.svg",
+  Postman: "/assets/brand/marquee/postman.svg",
+  TestRail: "/assets/brand/marquee/testrail.svg",
+  JUnit: "/assets/brand/marquee/junit5.svg",
+  TypeScript: "/assets/brand/marquee/typescript.svg",
+  Python: "/assets/brand/marquee/python.svg",
+  Kafka: "/assets/brand/marquee/apachekafka.svg",
+  k6: "/assets/brand/marquee/k6.svg",
+  JMeter: "/assets/brand/marquee/apachejmeter.svg",
+  Docker: "/assets/brand/marquee/docker.svg",
+  GitHub: "/assets/brand/marquee/github.svg",
+  Jenkins: "/assets/brand/marquee/jenkins.svg",
+  MySQL: "/assets/brand/marquee/mysql.svg",
+  MongoDB: "/assets/brand/marquee/mongodb.svg",
+  Grafana: "/assets/brand/marquee/grafana.svg",
+};
+
+export const technologyWordmarks: readonly BrandWordmark[] = technologyMarquee.map((name) => ({
+  name,
+  mark: technologyMarkByName[name] ?? name.slice(0, 3).toUpperCase(),
+  ...(technologyLogoAssetByName[name] ? { logoAsset: technologyLogoAssetByName[name] } : {}),
+}));
 
 export const signalSteps = ["Build", "Test", "Validate", "Ship"] as const;

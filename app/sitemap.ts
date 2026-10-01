@@ -3,7 +3,19 @@ import { getSiteOrigin } from "@/content/site-url";
 
 export const dynamic = "force-static";
 
-const routes = ["/", "/services/", "/solutions/", "/work/", "/about/", "/contact/", "/privacy/"];
+const routes = [
+  "/",
+  "/services/",
+  "/services/website-development/",
+  "/services/custom-software/",
+  "/services/ai-quality-engineering/",
+  "/services/qa-automation/",
+  "/solutions/",
+  "/work/",
+  "/about/",
+  "/contact/",
+  "/privacy/",
+];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const origin = getSiteOrigin();

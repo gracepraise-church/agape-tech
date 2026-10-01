@@ -17,12 +17,14 @@ import { BrandMarquee } from "@/components/brand-marquee";
 import { CodeStory } from "@/components/code-story/code-story";
 import { EstablishedBadge } from "@/components/established-badge";
 import { ProjectFinder } from "@/components/project-finder";
+import { QuoteCta } from "@/components/quote-cta";
 import { EngineeringScrollStory } from "@/components/scroll-story/engineering-scroll-story";
 import { SectionHeading } from "@/components/section-heading";
 import { WorkScrollStory } from "@/components/work-story/work-scroll-story";
 import { business } from "@/content/business";
 import { signalSteps } from "@/content/interactive";
-import { capabilities, industries, services } from "@/content/site";
+import { createPageMetadata } from "@/content/metadata";
+import { capabilities, services } from "@/content/site";
 import { getSiteOrigin } from "@/content/site-url";
 
 const iconByName: Record<string, LucideIcon> = {
@@ -36,16 +38,32 @@ const iconByName: Record<string, LucideIcon> = {
 };
 
 const siteOrigin = getSiteOrigin();
+const homepageDescription =
+  "Agape Tech builds professional websites, custom business software, and quality engineering systems that help organizations move forward with confidence.";
+
+export const metadata = createPageMetadata({
+  title: "Custom Software, Websites & QA",
+  description: homepageDescription,
+  path: "/",
+});
+
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
+  ...(siteOrigin ? { "@id": new URL("/#organization", siteOrigin).toString() } : {}),
   name: business.brandName,
   legalName: business.legalName,
   slogan: business.tagline,
+  description: homepageDescription,
   foundingDate: String(business.companyHistory.establishedYear),
   ...(siteOrigin ? {
     url: siteOrigin.toString(),
-    logo: new URL("/assets/brand/agape-tech-logo-stacked-transparent.webp", siteOrigin).toString(),
+    logo: {
+      "@type": "ImageObject",
+      url: new URL("/assets/brand/agape-tech-logo-stacked-transparent.webp", siteOrigin).toString(),
+      width: 1254,
+      height: 1254,
+    },
   } : {}),
   ...(business.linkedin ? { sameAs: [business.linkedin] } : {}),
 };
@@ -87,6 +105,9 @@ export default function HomePage() {
               </Link>
             </div>
             <p className="hero-tagline">Build smarter. Test deeper. Ship with confidence.</p>
+            <div className="hero-credibility">
+              <EstablishedBadge variant="hero" />
+            </div>
             <ol aria-label="Engineering signal path" className="hero-signal">
               {signalSteps.map((step) => (
                 <li key={step}>{step}</li>
@@ -119,62 +140,73 @@ export default function HomePage() {
             </span>
           </div>
         </div>
-        <a className="hero-scroll" href="#experience">
+        <a className="hero-scroll" href="#services">
           <span>Scroll to explore</span>
           <ArrowDown aria-hidden="true" size={15} />
         </a>
         <div aria-hidden="true" className="hero-bottom-line" />
       </section>
 
-      <section aria-labelledby="credibility-title" className="credibility-section">
-        <div className="page-shell credibility-inner">
-          <EstablishedBadge />
-          <div className="credibility-copy">
-            <span className="eyebrow">
-              <span aria-hidden="true" className="eyebrow-mark" />
-              ESTABLISHED / EXPERIENCE
-            </span>
-            <h2 id="credibility-title">Established in 2014. Built for what comes next.</h2>
-            <p>
-              More than a decade of building, validating, and improving digital systems—now
-              applied to AI, automation, quality engineering, and software development.
-            </p>
+      <section aria-labelledby="services-title" className="services-section section-space" id="services">
+        <div className="page-shell">
+          <div className="section-heading-row">
+            <SectionHeading
+              description="From professional organization websites to tailored management systems and engineering confidence, the right support starts with the work in front of you."
+              eyebrow="WHAT WE BUILD"
+              id="services-title"
+              title="Professional technology, shaped around your goals."
+            />
+            <Link className="text-link section-aside-link" href="/services/">
+              Explore all services <ArrowUpRight aria-hidden="true" size={16} />
+            </Link>
+          </div>
+          <div className="service-grid">
+            {services.map((service, index) => {
+              const Icon = iconByName[service.icon];
+              return (
+                <Link
+                  className="service-card"
+                  href={
+                    service.landingPath ??
+                    `/contact/?service=${encodeURIComponent(service.contactService)}#project-intake`
+                  }
+                  key={service.title}
+                >
+                  <div className="service-card-top">
+                    <span className="service-icon">
+                      <Icon aria-hidden="true" size={21} strokeWidth={1.6} />
+                    </span>
+                    <span className="service-number">0{index + 1}</span>
+                  </div>
+                  <span className="card-eyebrow">{service.category}</span>
+                  <h3>{service.title}</h3>
+                  <p>{service.description}</p>
+                  <div className="service-tags">
+                    {service.tags.map((tag) => (
+                      <span key={tag}>{tag}</span>
+                    ))}
+                  </div>
+                  <span className="service-arrow" aria-hidden="true">
+                    <ArrowUpRight size={17} />
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      <section aria-labelledby="experience-title" className="experience-section" id="experience">
-        <div className="experience-top page-shell">
-          <div>
-            <span className="eyebrow">
-              <span className="eyebrow-mark" aria-hidden="true" />
-              SECTORS WE CAN SUPPORT
-            </span>
-            <h2 id="experience-title">A broader perspective, brought to your work.</h2>
-            <Link className="text-link experience-link" href="/solutions/">
-              Explore solutions <ArrowUpRight aria-hidden="true" size={16} />
-            </Link>
-          </div>
-          <p>
-            From media and healthcare to mobility and small business, each sector brings different
-            people, systems, and constraints worth understanding.
-          </p>
-        </div>
-        <div className="experience-marquee">
-          <div className="marquee-track page-shell">
-            {industries.map((industry) => (
-              <span className="experience-name" key={industry.number}>{industry.title}</span>
-            ))}
-          </div>
-        </div>
-        <p className="experience-disclaimer page-shell">Areas of focus, not a claim of client relationships or past engagements.</p>
-      </section>
+      <EngineeringScrollStory />
+
+      <CodeStory />
+
+      <BrandMarquee />
 
       <section aria-labelledby="capabilities-title" className="capabilities-section section-space">
         <div className="page-shell">
           <SectionHeading
             description="A connected set of capabilities for the moments when your next step needs both imagination and rigor."
-            eyebrow="WHAT WE BRING"
+            eyebrow="CAPABILITIES, APPLIED"
             id="capabilities-title"
             title="Good technology moves people forward."
           />
@@ -200,57 +232,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      <EngineeringScrollStory />
-
-      <CodeStory />
-
-      <section aria-labelledby="services-title" className="services-section section-space" id="services">
-        <div className="page-shell">
-          <div className="section-heading-row">
-            <SectionHeading
-              description="The right support for a specific need — or a partner to connect the bigger picture."
-              eyebrow="CAPABILITIES, APPLIED"
-              id="services-title"
-              title="What we do."
-            />
-            <Link className="text-link section-aside-link" href="/services/">
-              Explore all services <ArrowUpRight aria-hidden="true" size={16} />
-            </Link>
-          </div>
-          <div className="service-grid">
-            {services.map((service, index) => {
-              const Icon = iconByName[service.icon];
-              return (
-                <Link className="service-card" href="/services/" key={service.title}>
-                  <div className="service-card-top">
-                    <span className="service-icon">
-                      <Icon aria-hidden="true" size={21} strokeWidth={1.6} />
-                    </span>
-                    <span className="service-number">0{index + 1}</span>
-                  </div>
-                  <span className="card-eyebrow">{service.category}</span>
-                  <h3>{service.title}</h3>
-                  <p>{service.description}</p>
-                  <div className="service-tags">
-                    {service.tags.map((tag) => (
-                      <span key={tag}>{tag}</span>
-                    ))}
-                  </div>
-                  <span className="service-arrow" aria-hidden="true">
-                    <ArrowUpRight size={17} />
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
       <WorkScrollStory />
 
       <ProjectFinder />
 
-      <BrandMarquee />
+      <QuoteCta />
 
       <section aria-labelledby="purpose-title" className="purpose-section">
         <div className="purpose-light" aria-hidden="true" />

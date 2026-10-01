@@ -7,6 +7,9 @@ type PageMetadataInput = {
   path: string;
 };
 
+export const socialBrandImagePath = "/assets/brand/agape-tech-logo-stacked-transparent.webp";
+export const socialBrandImageAlt = "Agape Tech logo — Technology with Purpose";
+
 const siteOrigin = getSiteOrigin();
 
 export function createPageMetadata({
@@ -16,12 +19,12 @@ export function createPageMetadata({
 }: PageMetadataInput): Metadata {
   const canonicalUrl = siteOrigin ? new URL(path, siteOrigin).toString() : undefined;
   const socialBrandImage = siteOrigin
-    ? new URL("/assets/brand/agape-tech-icon-512.png", siteOrigin).toString()
+    ? new URL(socialBrandImagePath, siteOrigin).toString()
     : undefined;
   const fullTitle = title === "Agape Tech" ? title : `${title} | Agape Tech`;
 
   return {
-    title,
+    title: path === "/" ? fullTitle : title,
     description,
     ...(!siteOrigin ? { robots: { index: false, follow: false } } : {}),
     ...(canonicalUrl
@@ -40,9 +43,9 @@ export function createPageMetadata({
             images: [
               {
                 url: socialBrandImage,
-                width: 512,
-                height: 512,
-                alt: "Agape Tech brand icon",
+                width: 1254,
+                height: 1254,
+                alt: socialBrandImageAlt,
               },
             ],
           }

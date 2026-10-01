@@ -9,9 +9,9 @@ import { createPageMetadata } from "@/content/metadata";
 import { operatingPrinciples } from "@/content/phase-two";
 
 export const metadata = createPageMetadata({
-  title: "About",
+  title: "About: Technology with Purpose",
   description:
-    "Learn about Agape Tech, established in 2014, and its purpose-driven approach to quality, intelligence, integrity, service, and partnership.",
+    "Learn how Agape Tech brings software engineering, quality, and technology consulting together with purpose. Established 2014.",
   path: "/about/",
 });
 

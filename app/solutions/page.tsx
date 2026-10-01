@@ -21,9 +21,9 @@ const businessProblems = [
 ] as const;
 
 export const metadata = createPageMetadata({
-  title: "Solutions",
+  title: "Technology Solutions for Real Business Problems",
   description:
-    "Explore practical technology approaches for business challenges across media, healthcare, public service, mobility, finance, and nonprofits.",
+    "Find practical technology and quality engineering approaches for media, healthcare, public service, mobility, finance, and nonprofit challenges.",
   path: "/solutions/",
 });
 

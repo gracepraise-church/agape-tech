@@ -2,7 +2,7 @@
 
 import { ArrowRight, CheckCircle2, LoaderCircle } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
-import { contactServices, projectStages } from "@/lib/contact/options";
+import { contactServices, isContactService, projectStages } from "@/lib/contact/options";
 import {
   ContactRequestError,
   getContactFormValidationErrors,
@@ -28,6 +28,7 @@ export function ContactForm({ turnstileSiteKey = "" }: ContactFormProps) {
   const [turnstileError, setTurnstileError] = useState("");
   const [turnstileInstance, setTurnstileInstance] = useState(0);
   const statusRef = useRef<HTMLDivElement>(null);
+  const serviceSelectRef = useRef<HTMLSelectElement>(null);
   const fieldErrors = submission.status === "error" ? submission.fields ?? {} : {};
 
   useEffect(() => {
@@ -35,6 +36,13 @@ export function ContactForm({ turnstileSiteKey = "" }: ContactFormProps) {
       statusRef.current?.focus();
     }
   }, [submission]);
+
+  useEffect(() => {
+    const requestedService = new URLSearchParams(window.location.search).get("service");
+    if (requestedService && isContactService(requestedService) && serviceSelectRef.current) {
+      serviceSelectRef.current.value = requestedService;
+    }
+  }, []);
 
   const handleTurnstileTokenChange = useCallback((token: string) => {
     setTurnstileToken(token);
@@ -178,6 +186,7 @@ export function ContactForm({ turnstileSiteKey = "" }: ContactFormProps) {
             defaultValue=""
             id="contact-service"
             name="service"
+            ref={serviceSelectRef}
             required
           >
             <option disabled value="">Choose a service</option>

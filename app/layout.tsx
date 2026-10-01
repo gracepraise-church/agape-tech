@@ -2,52 +2,46 @@ import type { Metadata, Viewport } from "next";
 import { ScrollRevealObserver } from "@/components/scroll-reveal-observer";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { socialBrandImageAlt, socialBrandImagePath } from "@/content/metadata";
 import { getSiteOrigin } from "@/content/site-url";
 import "./globals.css";
 import "./interactive.css";
 
 const description =
-  "Agape Tech helps organizations build, automate, validate, and scale digital solutions through AI, quality engineering, software development, and technology consulting.";
+  "Agape Tech helps organizations build, automate, validate, and scale digital solutions through professional websites, custom business software, AI quality engineering, and technology consulting.";
 const siteOrigin = getSiteOrigin();
 const socialBrandImage = siteOrigin
-  ? new URL("/assets/brand/agape-tech-icon-512.png", siteOrigin).toString()
+  ? new URL(socialBrandImagePath, siteOrigin).toString()
   : undefined;
 
 export const metadata: Metadata = {
   ...(siteOrigin
     ? {
         metadataBase: siteOrigin,
-        alternates: { canonical: "/" },
+        alternates: { canonical: siteOrigin.toString() },
       }
     : {}),
   title: {
-    default: "Agape Tech | Technology with Purpose",
+    default: "Custom Software, Websites & QA | Agape Tech",
     template: "%s | Agape Tech",
   },
   description,
   ...(!siteOrigin ? { robots: { index: false, follow: false } } : {}),
   applicationName: "Agape Tech",
-  keywords: [
-    "technology consulting",
-    "quality engineering",
-    "AI engineering",
-    "test automation",
-    "software development",
-  ],
   openGraph: {
     type: "website",
     siteName: "Agape Tech",
-    title: "Agape Tech | Technology with Purpose",
+    title: "Custom Software, Websites & QA | Agape Tech",
     description,
     ...(siteOrigin && socialBrandImage
       ? {
           url: siteOrigin.toString(),
           images: [
-            {
-              url: socialBrandImage,
-              width: 512,
-              height: 512,
-              alt: "Agape Tech brand icon",
+              {
+                url: socialBrandImage,
+                width: 1254,
+                height: 1254,
+                alt: socialBrandImageAlt,
             },
           ],
         }

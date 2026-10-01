@@ -44,28 +44,74 @@ export const capabilities = [
 
 export const services = [
   {
-    title: "AI & Intelligent Systems",
-    category: "INTELLIGENT SYSTEMS",
+    title: "Website & Web Application Development",
+    category: "DIGITAL EXPERIENCES",
     description:
-      "Bring AI into the flow of work with useful applications, evaluations, and thoughtful safeguards.",
-    icon: "brain",
-    tags: ["AI applications", "LLM evaluation", "Workflow agents"],
+      "Professional websites and web applications designed around your organization’s identity, operational needs, and long-term goals.",
+    icon: "layers",
+    tags: ["Responsive websites", "Accessibility", "API integration"],
+    contactService: "Website Development",
+    landingPath: "/services/website-development/",
   },
   {
-    title: "Quality Engineering",
-    category: "QUALITY ENGINEERING",
+    title: "Custom Business & Management Software",
+    category: "TAILORED WORKFLOWS",
     description:
-      "Make quality a confident, measurable part of how your team designs, builds, and releases.",
-    icon: "shield",
-    tags: ["Quality strategy", "Test architecture", "Release confidence"],
+      "Purpose-built systems for finance, people, customers, inventory, scheduling, reporting, and the work between them.",
+    icon: "workflow",
+    tags: ["Dashboards", "Workflow automation", "Custom requirements"],
+    contactService: "Custom Business Software",
+    landingPath: "/services/custom-software/",
+  },
+  {
+    title: "AI Quality Engineering",
+    category: "INTELLIGENT SYSTEMS",
+    description:
+      "Evaluate AI-enabled experiences with practical scenarios, guardrails, and quality signals before people rely on them.",
+    icon: "brain",
+    tags: ["LLM evaluation", "Guardrails", "Risk scenarios"],
+    contactService: "AI Quality Engineering",
+    landingPath: "/services/ai-quality-engineering/",
   },
   {
     title: "Test Automation",
     category: "SMARTER AUTOMATION",
     description:
-      "Create automation that is maintainable, meaningful, and aligned with the way your product changes.",
+      "Create maintainable automation aligned with the way your product changes, from browser journeys to CI feedback.",
     icon: "workflow",
     tags: ["Playwright", "Regression", "CI/CD"],
+    contactService: "Test Automation",
+    landingPath: "/services/qa-automation/",
+  },
+  {
+    title: "API & Integration Testing",
+    category: "CONNECTED SYSTEMS",
+    description:
+      "Validate the contracts, business rules, data exchanges, and failure paths that connected systems depend on.",
+    icon: "scan",
+    tags: ["API contracts", "Data validation", "Integration flows"],
+    contactService: "API & Integration",
+    landingPath: null,
+  },
+  {
+    title: "Performance Engineering",
+    category: "PERFORMANCE & SCALE",
+    description:
+      "Use realistic workloads and measurable thresholds to understand how digital experiences behave under pressure.",
+    icon: "shield",
+    tags: ["k6", "Load testing", "Results analysis"],
+    contactService: "Performance Engineering",
+    landingPath: null,
+  },
+  {
+    title: "Cloud & Digital Solutions",
+    category: "DELIVERY SYSTEMS",
+    description:
+      "Connect cloud platforms, delivery workflows, integration quality, and monitoring around the needs of your team.",
+    icon: "sparkles",
+    tags: ["AWS / Azure", "CI/CD", "Observability"],
+    contactService: "Cloud & Technology Consulting",
+    landingPath: null,
   },
   {
     title: "Technology Consulting",
@@ -74,6 +120,8 @@ export const services = [
       "Get practical engineering guidance to turn a complex technical challenge into a clear next step.",
     icon: "compass",
     tags: ["Technical discovery", "Architecture", "Delivery"],
+    contactService: "Cloud & Technology Consulting",
+    landingPath: null,
   },
 ] as const;
 

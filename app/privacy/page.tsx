@@ -3,9 +3,9 @@ import { PrivacyContent } from "@/components/privacy-content";
 import { createPageMetadata } from "@/content/metadata";
 
 export const metadata = createPageMetadata({
-  title: "Privacy",
+  title: "Privacy Policy",
   description:
-    "Read how the current Agape Tech website handles project-finder selections and contact form information.",
+    "Read how the Agape Tech website handles project-finder selections, contact form information, and optional security checks.",
   path: "/privacy/",
 });
 

@@ -13,6 +13,7 @@ export const detailedServices = [
     capabilities: ["AI experience design", "Evaluation strategy", "Prompt and response testing", "Workflow integration"],
     technologies: ["OpenAI", "AWS Bedrock", "LangChain", "LangGraph"],
     icon: "brain",
+    landingPath: "/services/ai-quality-engineering/",
   },
   {
     id: "quality-engineering",
@@ -28,6 +29,7 @@ export const detailedServices = [
     capabilities: ["Quality models", "Test architecture", "Exploratory testing", "Release confidence"],
     technologies: ["TypeScript", "Playwright", "Selenium", "Katalon"],
     icon: "shield",
+    landingPath: null,
   },
   {
     id: "test-automation",
@@ -43,6 +45,7 @@ export const detailedServices = [
     capabilities: ["Framework architecture", "Browser and mobile automation", "Test data strategy", "CI feedback"],
     technologies: ["Playwright", "TypeScript", "Selenium", "Java", "Appium", "Katalon"],
     icon: "workflow",
+    landingPath: "/services/qa-automation/",
   },
   {
     id: "api-integration-testing",
@@ -58,6 +61,7 @@ export const detailedServices = [
     capabilities: ["Contract validation", "Workflow coverage", "Negative-path testing", "Data reconciliation"],
     technologies: ["REST Assured", "Postman", "Playwright", "TypeScript"],
     icon: "network",
+    landingPath: null,
   },
   {
     id: "performance-engineering",
@@ -73,25 +77,43 @@ export const detailedServices = [
     capabilities: ["Load and stress testing", "Performance baselines", "Scenario design", "Results interpretation"],
     technologies: ["k6", "JMeter", "Locust", "Gatling"],
     icon: "activity",
+    landingPath: null,
   },
   {
     id: "web-application-development",
     number: "06",
-    title: "Web & Application Development",
+    title: "Website & Web Application Development",
     category: "DIGITAL PRODUCTS",
     introduction:
-      "Bring a useful product idea to life with careful interface design and dependable engineering.",
+      "Create a professional digital presence or a focused application shaped around your organization’s identity, users, and goals.",
     whatItIs:
-      "Design and development of web experiences and focused applications shaped around real user needs.",
-    problems: ["A new product needs a starting point", "Existing workflows create friction", "Teams need a delivery partner"],
-    engagements: ["Product discovery and prototyping", "Web application delivery", "Workflow and experience improvements"],
-    capabilities: ["Responsive interfaces", "Application architecture", "Accessible interactions", "Quality-minded delivery"],
-    technologies: ["TypeScript", "React", "Next.js", "PostgreSQL"],
+      "Professional organization websites, responsive web applications, modernization, CMS integration, accessibility, technical SEO foundations, APIs, and ongoing improvements.",
+    problems: ["A new organization needs a credible web presence", "An existing site needs modernization", "A workflow needs a better interface"],
+    engagements: ["Website discovery and design direction", "Responsive website or web application delivery", "Accessibility and ongoing improvement plan"],
+    capabilities: ["Responsive interfaces", "Application architecture", "CMS and API integration", "Accessible interactions", "Quality-minded delivery"],
+    technologies: ["TypeScript", "React", "Next.js", "API integrations"],
     icon: "layers",
+    landingPath: "/services/website-development/",
+  },
+  {
+    id: "custom-business-software",
+    number: "07",
+    title: "Custom Business & Management Software",
+    category: "TAILORED WORKFLOWS",
+    introduction:
+      "Turn an important operational need into a practical system designed around the way your organization works.",
+    whatItIs:
+      "Custom development capabilities for accounting and financial workflows, invoicing, HR, CRM, inventory, scheduling, membership, donations, dashboards, reporting, and administrative automation.",
+    problems: ["Important work is spread across disconnected tools", "Manual administration is slowing the team down", "Off-the-shelf software does not fit the requirements"],
+    engagements: ["Workflow discovery and requirements mapping", "Custom business application development", "Incremental automation and reporting improvements"],
+    capabilities: ["Role-based workflows", "Data and API integration", "Dashboards and reporting", "Administrative automation", "Maintainable delivery"],
+    technologies: ["Web applications", "APIs", "Databases", "Cloud platforms"],
+    icon: "workflow",
+    landingPath: "/services/custom-software/",
   },
   {
     id: "cloud-devops-quality",
-    number: "07",
+    number: "08",
     title: "Cloud & DevOps Quality",
     category: "DELIVERY SYSTEMS",
     introduction:
@@ -103,10 +125,11 @@ export const detailedServices = [
     capabilities: ["CI test integration", "Environment strategy", "Pipeline feedback", "Release validation"],
     technologies: ["GitHub Actions", "Jenkins", "Docker", "AWS", "Azure"],
     icon: "cloud",
+    landingPath: null,
   },
   {
     id: "technology-consulting",
-    number: "08",
+    number: "09",
     title: "Technology Consulting",
     category: "CLEAR DIRECTION",
     introduction:
@@ -118,6 +141,7 @@ export const detailedServices = [
     capabilities: ["Problem framing", "Technical assessment", "Option analysis", "Collaborative planning"],
     technologies: ["Approach shaped to context", "Cloud platforms", "Modern web systems", "Quality tooling"],
     icon: "compass",
+    landingPath: null,
   },
 ] as const;
 

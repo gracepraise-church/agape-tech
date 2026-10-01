@@ -23,7 +23,7 @@ const validInquiry = {
   name: "Taylor Example",
   email: "taylor@example.com",
   organization: "Example Studio",
-  service: "Software Development",
+  service: "Custom Web Application",
   projectStage: "Planning",
   summary: "We need help planning a thoughtful software product.",
   website: "",

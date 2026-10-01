@@ -9,7 +9,7 @@ const validValues = {
   name: "Taylor Example",
   email: "taylor@example.com",
   organization: "Example Studio",
-  service: "Software Development",
+  service: "Custom Web Application",
   projectStage: "Planning",
   summary: "We need help planning a thoughtful software product.",
   website: "",
@@ -67,10 +67,10 @@ describe("contact form DOM submission contract", () => {
 
   it("accepts supported service and project-stage select values", () => {
     const inquiry = readContactFormData(
-      formData({ service: "Quality Engineering", projectStage: "Production Issue" }),
+      formData({ service: "AI Quality Engineering", projectStage: "Production Issue" }),
     );
 
-    expect(inquiry.service).toBe("Quality Engineering");
+    expect(inquiry.service).toBe("AI Quality Engineering");
     expect(inquiry.projectStage).toBe("Production Issue");
     expect(getContactFormValidationErrors(inquiry)).toEqual({});
   });

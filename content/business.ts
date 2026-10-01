@@ -10,6 +10,7 @@ export type LeadershipProfile = {
 export const companyHistory = {
   establishedYear: 2014,
   establishedLabel: "Established 2014",
+  badgeLabel: "EST. 2014",
   yearsValue: "12+",
   yearsLabel: "12+ Years",
   sinceLabel: "Since 2014",

@@ -2,15 +2,16 @@ import Link from "next/link";
 import { ArrowUpRight, Check } from "lucide-react";
 import { CapabilityIcon } from "@/components/capability-icon";
 import { PageHero } from "@/components/page-hero";
+import { QuoteCta } from "@/components/quote-cta";
 import { SectionHeading } from "@/components/section-heading";
 import { PointerCard } from "@/components/pointer-card";
 import { createPageMetadata } from "@/content/metadata";
 import { detailedServices } from "@/content/phase-two";
 
 export const metadata = createPageMetadata({
-  title: "Services",
+  title: "Custom Software & Quality Engineering Services",
   description:
-    "Explore Agape Tech's AI, quality engineering, automation, API, performance, software development, cloud, and consulting services.",
+    "Explore Agape Tech services for websites, custom business software, AI quality engineering, test automation, APIs, performance, cloud, and consulting.",
   path: "/services/",
 });
 
@@ -37,7 +38,7 @@ export default function ServicesPage() {
               eyebrow="A CONNECTED PRACTICE"
               title="The right expertise for the work in front of you."
             />
-            <p className="section-aside-note">Eight capabilities. One thoughtful engineering mindset.</p>
+            <p className="section-aside-note">Nine capabilities. One thoughtful engineering mindset.</p>
           </div>
           <div className="service-detail-list">
             {detailedServices.map((service) => (
@@ -85,6 +86,11 @@ export default function ServicesPage() {
                       {service.technologies.map((technology) => <span key={technology}>{technology}</span>)}
                     </div>
                   </div>
+                  {service.landingPath ? (
+                    <Link className="service-detail-landing-link" href={service.landingPath}>
+                      Explore this service <ArrowUpRight aria-hidden="true" size={15} />
+                    </Link>
+                  ) : null}
                   <Link className="service-detail-cta" href="/contact/">
                     Discuss this capability <ArrowUpRight aria-hidden="true" size={15} />
                   </Link>
@@ -95,17 +101,7 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      <section className="service-engagement-cta">
-        <div className="page-shell service-engagement-cta-inner">
-          <div>
-            <span className="eyebrow"><span aria-hidden="true" className="eyebrow-mark" />A GOOD PLACE TO BEGIN</span>
-            <h2>Not sure which capability fits? Start with the challenge.</h2>
-          </div>
-          <Link className="button button-primary" href="/contact/">
-            Talk through the problem <ArrowUpRight aria-hidden="true" size={16} />
-          </Link>
-        </div>
-      </section>
+      <QuoteCta compact />
     </main>
   );
 }

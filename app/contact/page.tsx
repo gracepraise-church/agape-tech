@@ -4,9 +4,9 @@ import { PageHero } from "@/components/page-hero";
 import { createPageMetadata } from "@/content/metadata";
 
 export const metadata = createPageMetadata({
-  title: "Contact",
+  title: "Request a Custom Quote",
   description:
-    "Tell Agape Tech what you are building and where thoughtful engineering support could help.",
+    "Tell Agape Tech what you are building, improving, or trying to understand and request a thoughtful custom quote.",
   path: "/contact/",
 });
 

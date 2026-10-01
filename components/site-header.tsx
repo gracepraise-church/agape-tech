@@ -61,14 +61,20 @@ export function SiteHeader() {
     <header className={`site-header${isScrolled ? " is-scrolled" : ""}`}>
       <div className="header-inner">
         <Link className="brand-link" href="/" aria-label="Agape Tech home" onClick={closeMenu}>
-          <Image
-            src="/assets/brand/agape-tech-logo-horizontal-transparent.webp"
-            alt="Agape Tech — Technology with Purpose"
-            width={2172}
-            height={724}
-            sizes="(max-width: 720px) 148px, 188px"
-            priority
-          />
+          <span className="brand-lockup">
+            <Image
+              src="/assets/brand/agape-tech-logo-horizontal-transparent.webp"
+              alt="Agape Tech — Technology with Purpose"
+              width={2172}
+              height={724}
+              sizes="(max-width: 720px) 148px, 188px"
+              priority
+            />
+            <span className="brand-established">
+              <span className="brand-established-full">ESTABLISHED 2014</span>
+              <span className="brand-established-short">EST. 2014</span>
+            </span>
+          </span>
         </Link>
 
         <nav className="desktop-nav" aria-label="Main navigation">

@@ -4,9 +4,9 @@ import { WorkGallery } from "@/components/work-gallery";
 import { createPageMetadata } from "@/content/metadata";
 
 export const metadata = createPageMetadata({
-  title: "Work",
+  title: "Representative Software Engineering Experience",
   description:
-    "Representative engineering experience in AI quality, automation, API validation, performance, cloud integration, and digital products.",
+    "See representative engineering approaches across AI quality, automation, API validation, performance, cloud integration, and digital products.",
   path: "/work/",
 });
 
